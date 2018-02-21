@@ -80,7 +80,7 @@ d3.csv("bitcoin.csv", function(error1, data1) {                   //  Load bitco
     // filter out hacks that are outside of our timeline
     var startDate = x.domain()[0].getTime();
     var endDate = x.domain()[1].getTime();
-    dataset2 = dataset2.filter(o => o.Date.getTime() <= endDate && o.Date.getTime() > startDate);
+    dataset2 = dataset2.filter(o => (o.Date && o.Date.getTime() <= endDate && o.Date.getTime() > startDate));
 
     for(var i = 0; i < dataset2.length; i++){
       d = dataset2[i];
