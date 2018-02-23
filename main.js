@@ -54,30 +54,37 @@ d3.queue()
   .defer(d3.csv, "bitcoin.csv")
   .defer(d3.csv, "ethereum.csv")
   .defer(d3.csv, "iota.csv")
-  // .defer(d3.csv, "nem.csv", type)
-  // .defer(d3.csv, "ripple.csv", type)
-  // .defer(d3.csv, "tether.csv", type)
-  // .defer(d3.csv, "vrc.csv", type)
+  .defer(d3.csv, "nem.csv")
+  .defer(d3.csv, "ripple.csv")
+  .defer(d3.csv, "tether.csv")
+  .defer(d3.csv, "vrc.csv")
   // .defer(d3.csv, "bitcoinAttacks.csv", type)
-  .await(function(error, bitcoinData, ethereumData) {
+  .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData) {
       if (error) {
         console.error('Oh mein Gott! Something went terribly wrong: ' + error);
 
       } else {
-        renderCharts([bitcoinData, ethereumData]);
+        renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData]);
       }
   });
 
 function renderCharts(cryptoArray, attackArray) {
+  // ToDo, Normalize date format to avoid verbosity
   var bitcoinData  = cryptoArray[0].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
   var ethereumData = cryptoArray[1].map(function(d) { return { date: parseDate(d.date), close: +d.close } });
-  var iotaData = cryptoArray[1].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+  var iotaData     = cryptoArray[2].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+  var nemData      = cryptoArray[3].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+  var rippleData   = cryptoArray[4].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
+  var tetherData   = cryptoArray[5].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+  var vrcData      = cryptoArray[6].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+
   x.domain(d3.extent(bitcoinData, function(d) { return d.date; }));
   y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
-
+  2018-02-18
   x2.domain(x.domain());
   y2.domain(y.domain());
-  
+
+  // ToDo Functions didn't append the paths correctly, find out the scoping problem
   focus.append("path")
     .datum(bitcoinData)
     .attr("class", "line")
@@ -101,7 +108,7 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("stroke", "purple")
     .attr("opacity", "0")
     .transition()
-    .attr("opacity", ".7")
+    .attr("opacity", "1")
     .duration(1000)
     .delay(1000)
     .attr("stroke-linejoin", "round")
@@ -116,7 +123,67 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("stroke", "silver")
     .attr("opacity", "0")
     .transition()
-    .attr("opacity", ".7")
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+
+  focus.append("path")
+    .datum(nemData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "green")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+
+  focus.append("path")
+    .datum(rippleData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "blue")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+
+  focus.append("path")
+    .datum(tetherData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "white")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+
+  focus.append("path")
+    .datum(vrcData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "yellow")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
     .duration(1000)
     .delay(1000)
     .attr("stroke-linejoin", "round")
@@ -146,7 +213,7 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("stroke-linejoin", "round")
     .attr("stroke-linecap", "round")
     .attr("stroke-width", 1.5);
-
+    
   context.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height2 + ")")
