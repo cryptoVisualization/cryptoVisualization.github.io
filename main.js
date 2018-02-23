@@ -7,6 +7,7 @@ var svg = d3.select("svg"),
 
 var parseDate = d3.timeParse("%-d/%-m/%Y");
 var parseTime = d3.timeParse("%d/%m/%Y");
+var parseNoFuckingDateIsTheSame = d3.timeParse("%m/%d/%Y");
 
 var x  = d3.scaleTime().range([0, width]),
     x2 = d3.scaleTime().range([0, width]),
@@ -50,30 +51,39 @@ var context = svg.append("g")
                  .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
 d3.queue()
-  .defer(d3.csv, "bitcoin.csv", type)
-  // .defer(d3.csv, "ethereum.csv", type)
-  // .defer(d3.csv, "iota.csv", type)
+  .defer(d3.csv, "bitcoin.csv")
+  .defer(d3.csv, "ethereum.csv")
+  .defer(d3.csv, "iota.csv")
   // .defer(d3.csv, "nem.csv", type)
   // .defer(d3.csv, "ripple.csv", type)
   // .defer(d3.csv, "tether.csv", type)
   // .defer(d3.csv, "vrc.csv", type)
   // .defer(d3.csv, "bitcoinAttacks.csv", type)
-  .await(function(error, bitcoinData) {
+  .await(function(error, bitcoinData, ethereumData) {
       if (error) {
         console.error('Oh mein Gott! Something went terribly wrong: ' + error);
 
       } else {
-        renderCharts([bitcoinData]);
+        renderCharts([bitcoinData, ethereumData]);
       }
   });
 
-function renderLine(target, data, color, secondary) {
-  target.append("path")
-    .datum(data)
+function renderCharts(cryptoArray, attackArray) {
+  var bitcoinData  = cryptoArray[0].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
+  var ethereumData = cryptoArray[1].map(function(d) { return { date: parseDate(d.date), close: +d.close } });
+  var iotaData = cryptoArray[1].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+  x.domain(d3.extent(bitcoinData, function(d) { return d.date; }));
+  y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
+
+  x2.domain(x.domain());
+  y2.domain(y.domain());
+  
+  focus.append("path")
+    .datum(bitcoinData)
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", color)
+    .attr("stroke", "green")
     .attr("opacity", "0")
     .transition()
     .attr("opacity", "1")
@@ -82,23 +92,36 @@ function renderLine(target, data, color, secondary) {
     .attr("stroke-linejoin", "round")
     .attr("stroke-linecap", "round")
     .attr("stroke-width", 1.5);
-}
 
-function renderLine2(target, data, color) {
-  renderLine(target, data, color, true);
-}
+  focus.append("path")
+    .datum(ethereumData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "purple")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", ".7")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
 
-function renderCharts(cryptoArray, attackArray) {
-  x.domain(d3.extent(cryptoArray[0], function(d) { return d.date; }));
-  y.domain(d3.extent(cryptoArray[0], function(d) { return d.close; }));
-
-  x2.domain(x.domain());
-  y2.domain(y.domain());
-
-  cryptoArray.map(function(cryto) { 
-    var dataset = cryto.map(function(d) { return { date: parseTime(d.date), close: +d.close } });  
-    renderLine(focus, dataset, "blue"); 
-  });
+  focus.append("path")
+    .datum(iotaData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "silver")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", ".7")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
 
   focus.append("g")
     .attr("class", "axis axis--x")
@@ -109,7 +132,20 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("class", "axis axis--y")
     .call(yAxis);
 
-  cryptoArray.map(function(crypto) { renderLine(context, crypto, "red", true); });
+  context.append("path")
+    .datum(bitcoinData)
+    .attr("class", "line")
+    .attr("d", line2)
+    .attr("fill", "none")
+    .attr("stroke", "green")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
 
   context.append("g")
     .attr("class", "axis axis--x")
@@ -133,7 +169,7 @@ function brushed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return;
   var s = d3.event.selection || x2.range();
   x.domain(s.map(x2.invert, x2));
-  focus.select(".line").attr("d", line);
+  focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
   svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
     .scale(width / (s[1] - s[0]))
@@ -144,13 +180,7 @@ function zoomed() {
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return;
   var t = d3.event.transform;
   x.domain(t.rescaleX(x2).domain());
-  focus.select(".line").attr("d", line);
+  focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-}
-
-function type(d) {
-  d.date = parseDate(d.date);
-  d.close = +d.close;
-  return d;
 }
