@@ -18,6 +18,21 @@
         font-weight: 100;
         letter-spacing: 1px;
       }
+      .crypto-logo-container {
+        max-width: 1000px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .crypto-logo {
+        width: auto;
+        height: 75px;
+      }
+      .crypto-logo:not(:last-child) {
+        margin-right: 50px;
+      }
+      .crypto-logo:hover {
+        box-shadow: 0 0 10px 10px white;
+      }
       .axis,
       .domain {
         stroke: #ffffff;
@@ -51,18 +66,15 @@
 
   <body>
     <h1>Visualizing cryptocurrencies price and fraud</h1>
+    <div class="crypto-logo-container">
+        <img src="img/bit.png" class="crypto-logo"/>
+        <img src="img/eth.png" class="crypto-logo"/>
+        <img src="img/ripple.png" class="crypto-logo"/>
+        <img src="img/nem.png" class="crypto-logo"/>
+        <img src="img/vericoin.png" class="crypto-logo"/>
+    </div>
+
     <svg width="960" height="500"></svg>
-    <filter id="dropshadow" height="130%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur -->
-        <feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset -->
-        <feComponentTransfer>
-          <feFuncA type="linear" slope="0.5"/> <!-- slope is the opacity of the shadow -->
-        </feComponentTransfer>
-        <feMerge> 
-          <feMergeNode/> <!-- this contains the offset blurred image -->
-          <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
-        </feMerge>
-      </filter>
 
     <script src="https://d3js.org/d3-color.v1.min.js"></script>
     <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
