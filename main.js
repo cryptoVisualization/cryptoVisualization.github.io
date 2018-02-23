@@ -1,18 +1,22 @@
 var svg = d3.select("svg"),
     margin  = {top: 20, right: 20, bottom: 110, left: 40},
     margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+    margin3 = {top: 730, right: 20, bottom: 30, left: 40},
     width   = +svg.attr("width") - margin.left - margin.right,
     height  = +svg.attr("height") - margin.top - margin.bottom,
     height2 = +svg.attr("height") - margin2.top - margin2.bottom;
+    height3 = +svg.attr("height") - margin3.top - margin2.bottom;
 
 var parseDate = d3.timeParse("%-d/%-m/%Y");
 var parseTime = d3.timeParse("%d/%m/%Y");
-var parseNoFuckingDateIsTheSame = d3.timeParse("%m/%d/%Y");
+var parseNoFuckingDateIsTheSame = d3.timeParse("%Y-%m-%d");
 
 var x  = d3.scaleTime().range([0, width]),
     x2 = d3.scaleTime().range([0, width]),
+    x3 = d3.scaleBand().rangeRound([0, width]).paddingInner(0.05).align(0.1);
     y  = d3.scaleLinear().range([height, 0]),
     y2 = d3.scaleLinear().range([height2, 0]);
+    y3 = d3.scaleLinear().rangeRound([height3, 0]);
 
 var xAxis  = d3.axisBottom(x),
     xAxis2 = d3.axisBottom(x2),
@@ -50,6 +54,9 @@ var context = svg.append("g")
                  .attr("class", "context")
                  .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
+var bars = svg.append("g")
+                 .attr("class", "bars")
+                 .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
 d3.queue()
   .defer(d3.csv, "bitcoin.csv")
   .defer(d3.csv, "ethereum.csv")
@@ -58,13 +65,13 @@ d3.queue()
   .defer(d3.csv, "ripple.csv")
   .defer(d3.csv, "tether.csv")
   .defer(d3.csv, "vrc.csv")
-  // .defer(d3.csv, "bitcoinAttacks.csv", type)
-  .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData) {
+  .defer(d3.csv, "bitcoinAttacks.csv")
+  .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData, bitcoinAttackData) {
       if (error) {
         console.error('Oh mein Gott! Something went terribly wrong: ' + error);
 
       } else {
-        renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData]);
+        renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], [bitcoinAttackData]);
       }
   });
 
@@ -80,9 +87,23 @@ function renderCharts(cryptoArray, attackArray) {
 
   x.domain(d3.extent(bitcoinData, function(d) { return d.date; }));
   y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
-  2018-02-18
   x2.domain(x.domain());
   y2.domain(y.domain());
+
+  var tip = d3.select('body')
+    .append('div')
+    .attr('class', 'tip')
+    .style('border', '1px solid steelblue')
+    .style('padding', '5px')
+    .style('background-color', 'rgba(255,255,255,.9)')
+    .style('position', 'absolute')
+    .style('display', 'none')
+    .on('mouseover', function(d, i) {
+      tip.transition().duration(0);
+    })
+    .on('mouseout', function(d, i) {
+      tip.style('display', 'none');
+    });
 
   // ToDo Functions didn't append the paths correctly, find out the scoping problem
   focus.append("path")
@@ -230,6 +251,66 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("height", height)
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
+
+  svg.selectAll("dot")
+    .data(attackArray[0])
+    .enter().append("circle")
+    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left; })
+    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)) + margin.top; })
+    .attr("class", function(d) {
+      if (d.typeOfAttack == "Hack") {
+        return "dot dot--green";
+      } else if (d.typeOfAttack == "Scam") {
+        return "dot dot--purple";
+      } else {
+        return "dot dot--red"
+      }
+    })
+    .attr("r", function(d) {
+      if (d.lossUSD > 250000 && d.lossUSD < 1000000) {
+        return 8;
+      } else if (d.lossUSD > 10000000 && d.lossUSD < 50000000) {
+        return 12;
+      } else if (d.lossUSD > 50000000) {
+        return 16;
+      } else {
+        return 4;
+      }
+    })
+    .on("click", function(d) {
+      window.open(d["source"]); 
+    })
+    .on('mouseover', function(d, i) {
+      tip.transition().duration(0);
+        //  Get coordinates of mouse for tooltip positioning
+      var coordinates = [0, 0];
+      coordinates = d3.mouse(this); 
+      var x = coordinates[0];
+      var y = coordinates[1];
+      //  Position tooltip
+      tip.style("left", x + 25 + "px")
+      tip.style("top", y - 140 + "px")
+      tip.style('display', 'block');
+      //  ES6 TEMPLATE string, this is the values given to tooltip
+      var html = `               
+      <h4>Click on circle to go to news article </h4>
+        <ul>    
+          <li>Platform of hack: ${d.platform} </li>
+          <li>Date of hack: ${d.date} </li>
+          <li>Loss in dollars: ${d.lossUSD} </li>
+          <li>Loss in BTC: ${d.lossCrypti} </li>
+          <li>Type of hack: ${d.typeOfAttack} </li>
+          <li>Closing price of this day: ${d.close} </li>
+        </ul>
+
+      `;
+      tip.html(html);     //  Give our template string to the tooltip for output
+    })
+    .on('mouseout', function(d, i) {  //  Mouseout
+      tip.transition()
+      .delay(800)
+      .style('display', 'none');
+    });
 }
 
 function brushed() {
@@ -238,6 +319,7 @@ function brushed() {
   x.domain(s.map(x2.invert, x2));
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
+  svg.selectAll(".dot").attr("transform", transform);
   svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
     .scale(width / (s[1] - s[0]))
     .translate(-s[0], 0));
@@ -249,5 +331,24 @@ function zoomed() {
   x.domain(t.rescaleX(x2).domain());
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
+  svg.selectAll(".dot").attr("transform", transform);
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
 }
+
+function transform(d) {
+  console.log(d3.select(this).attr("cy"))
+  return "translate(" + (x(parseNoFuckingDateIsTheSame(d.date)) + margin.left) + "," + d3.select(this).attr("cy") + ")";
+}
+
+function closeVal(bitcoinData, date) {
+  var found = bitcoinData.filter(function(datapoint) {
+    var newDate = parseNoFuckingDateIsTheSame(date);
+    return datapoint.date.getTime() === newDate.getTime();
+  });
+
+  if (found.length) {
+    return found[0].close
+  } 
+
+  return 0;
+} 
