@@ -30,7 +30,8 @@
       .crypto-logo:not(:last-child) {
         margin-right: 50px;
       }
-      .crypto-logo:hover {
+
+      .crypto-logo-clicked {
         box-shadow: 0 0 10px 10px white;
       }
       .axis,
@@ -67,11 +68,11 @@
   <body>
     <h1>Visualizing cryptocurrencies price and fraud</h1>
     <div class="crypto-logo-container">
-        <img src="img/bit.png" class="crypto-logo"/>
-        <img src="img/eth.png" class="crypto-logo"/>
-        <img src="img/ripple.png" class="crypto-logo"/>
-        <img src="img/nem.png" class="crypto-logo"/>
-        <img src="img/vericoin.png" class="crypto-logo"/>
+        <img src="img/bit.png" class="crypto-logo crypto-logo-clicked" id="bitcoin-logo"/>
+        <img src="img/eth.png" class="crypto-logo crypto-logo-clicked" id="eth-logo"/>
+        <img src="img/ripple.png" class="crypto-logo crypto-logo-clicked" id="ripple-logo"/>
+        <img src="img/nem.png" class="crypto-logo crypto-logo-clicked" id="nem-logo"/>
+        <img src="img/vericoin.png" class="crypto-logo crypto-logo-clicked" id="vericoin-logo"/>
     </div>
 
     <svg width="960" height="500"></svg>

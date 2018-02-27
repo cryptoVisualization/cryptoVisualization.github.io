@@ -40,6 +40,13 @@ var line2 = d3.line()
               .x(function(d) { return x2(d.date); })
               .y(function(d) { return y2(d.close); });
 
+
+var bitcoinLogo = document.querySelector("#bitcoin-logo");
+var ethLogo = document.querySelector("#eth-logo");
+var rippleLogo = document.querySelector("#ripple-logo");
+var nemLogo = document.querySelector("#nem-logo");
+var vericoinLogo = document.querySelector("#vericoin-logo");
+
 svg.append("defs").append("clipPath")
    .attr("id", "clip")
    .append("rect")
@@ -106,110 +113,94 @@ function renderCharts(cryptoArray, attackArray) {
     });
 
   // ToDo Functions didn't append the paths correctly, find out the scoping problem
-  focus.append("path")
-    .datum(bitcoinData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "green")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
 
-  focus.append("path")
-    .datum(ethereumData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "purple")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+    //  Add paths for all coins
+    addBitcoinPath(bitcoinData);         
+    addEthereumPath(ethereumData);
+    addIotaPath(iotaData);
+    addNemPath(nemData);
+    addRipplePath(rippleData);
+    addTetherPath(tetherData);
+    addVrcPath(vrcData);
+    
+    
+    bitcoinLogo.addEventListener("click", function() {
+      bitcoinLogo.classList.toggle("crypto-logo-clicked");   
+      //  Get opacity of bitcoin
+      var opacity =  d3.select("#bitcoinData").style("opacity");
+      //  Change line opacity to hide when button is clicked etc
+      if (opacity > 0) {
+         d3.select("#bitcoinData").style("opacity", 0);
+      } else {
+         d3.select("#bitcoinData").style("opacity", 1);
+ 
+      }
+    });
 
-  focus.append("path")
-    .datum(iotaData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "silver")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+     
+    ethLogo.addEventListener("click", function() {
+      ethLogo.classList.toggle("crypto-logo-clicked");   
+      //  Get opacity of bitcoin
+      var opacity =  d3.select("#ethData").style("opacity");
+      //  Change line opacity to hide when button is clicked etc
+      if (opacity > 0) {
+         d3.select("#ethData").style("opacity", 0);
+      } else {
+         d3.select("#ethData").style("opacity", 1);
+ 
+      }
+    });
 
-  focus.append("path")
-    .datum(nemData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "green")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
 
-  focus.append("path")
-    .datum(rippleData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "blue")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+         
+    rippleLogo.addEventListener("click", function() {
+      rippleLogo.classList.toggle("crypto-logo-clicked");   
+      //  Get opacity of bitcoin
+      var opacity =  d3.select("#rippleData").style("opacity");
+      //  Change line opacity to hide when button is clicked etc
+      if (opacity > 0) {
+         d3.select("#rippleData").style("opacity", 0);
+      } else {
+         d3.select("#rippleData").style("opacity", 1);
+ 
+      }
+    });
 
-  focus.append("path")
-    .datum(tetherData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "white")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+         
+    nemLogo.addEventListener("click", function() {
+      nemLogo.classList.toggle("crypto-logo-clicked");   
+      //  Get opacity of bitcoin
+      var opacity =  d3.select("#nemData").style("opacity");
+      //  Change line opacity to hide when button is clicked etc
+      if (opacity > 0) {
+         d3.select("#nemData").style("opacity", 0);
+      } else {
+         d3.select("#nemData").style("opacity", 1);
+ 
+      }
+    });
 
-  focus.append("path")
-    .datum(vrcData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "yellow")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+
+
+         
+    vericoinLogo.addEventListener("click", function() {
+      vericoinLogo.classList.toggle("crypto-logo-clicked");   
+      //  Get opacity of bitcoin
+      var opacity =  d3.select("#veriData").style("opacity");
+      //  Change line opacity to hide when button is clicked etc
+      if (opacity > 0) {
+         d3.select("#veriData").style("opacity", 0);
+      } else {
+         d3.select("#veriData").style("opacity", 1);
+ 
+      }
+    });
+
+
+  
+
+
+
 
   focus.append("g")
     .attr("class", "axis axis--x")
@@ -352,3 +343,138 @@ function closeVal(bitcoinData, date) {
 
   return 0;
 } 
+
+
+
+function addBitcoinPath(bitcoinData) {
+  focus.append("path")
+  .datum(bitcoinData)
+  .attr("class", "line")
+  .attr("d", line)
+  .attr("fill", "none")
+  .attr("stroke", "green")
+  .attr("opacity", "0")
+  .transition()
+  .attr("opacity", "1")
+  .duration(1000)
+  .delay(1000)
+  .attr("id", "bitcoinData")
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-linecap", "round")
+  .attr("stroke-width", 1.5);
+}
+
+
+function addEthereumPath(ethereumData) {
+  focus.append("path")
+  .datum(ethereumData)
+  .attr("class", "line")
+  .attr("d", line)
+  .attr("fill", "none")
+  .attr("stroke", "purple")
+  .attr("opacity", "0")
+  .transition()
+  .attr("opacity", "1")
+  .duration(1000)
+  .delay(1000)
+  .attr("id", "ethData")
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-linecap", "round")
+  .attr("stroke-width", 1.5);
+}
+
+
+function addIotaPath (iotaData) {
+  focus.append("path")
+  .datum(iotaData)
+  .attr("class", "line")
+  .attr("d", line)
+  .attr("fill", "none")
+  .attr("stroke", "silver")
+  .attr("opacity", "0")
+  .transition()
+  .attr("opacity", "1")
+  .duration(1000)
+  .delay(1000)
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-linecap", "round")
+  .attr("stroke-width", 1.5);
+}
+
+
+function addNemPath(nemData) {
+  focus.append("path")
+    .datum(nemData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "green")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("id", "nemData")
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+
+}
+
+
+function addRipplePath(rippleData) {
+  focus.append("path")
+    .datum(rippleData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "blue")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("id", "rippleData")
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+}
+
+
+
+function addTetherPath (tetherData) {
+  focus.append("path")
+  .datum(tetherData)
+  .attr("class", "line")
+  .attr("d", line)
+  .attr("fill", "none")
+  .attr("stroke", "white")
+  .attr("opacity", "0")
+  .transition()
+  .attr("opacity", "1")
+  .duration(1000)
+  .delay(1000)
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-linecap", "round")
+  .attr("stroke-width", 1.5);
+}
+
+
+
+function addVrcPath(vrcData) {
+  focus.append("path")
+    .datum(vrcData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "yellow")
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000)
+    .attr("id", "veriData")
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5);
+}
