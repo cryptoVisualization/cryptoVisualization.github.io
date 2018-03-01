@@ -50,6 +50,11 @@ var focus = svg.append("g")
                .attr("class", "focus")
                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var dots = svg.append("g")
+              .attr("class", "dots")
+              .attr("clip-path", "url(#clip)")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 var context = svg.append("g")
                  .attr("class", "context")
                  .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
@@ -256,11 +261,11 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
 
-  svg.selectAll("dot")
+  dots.selectAll("dot")
     .data(attackArray[0])
     .enter().append("circle")
-    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left; })
-    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)) + margin.top; })
+    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)); })
+    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)); })
     .attr("class", function(d) {
       if (d.typeOfAttack == "Hack") {
         return "dot dot--green";
@@ -323,8 +328,8 @@ function brushed() {
   x.domain(s.map(x2.invert, x2));
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("cx",function(d){
-    return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left;
+  dots.selectAll(".dot").attr("cx",function(d){
+    return x(parseNoFuckingDateIsTheSame(d.date));
   })
   .attr("cy",function(d){
     return d3.select(this).attr("cy");
@@ -340,10 +345,10 @@ function zoomed() {
   x.domain(t.rescaleX(x2).domain());
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("cx",function(d){
-    return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left;
+  dots.selectAll(".dot").attr("cx", function(d) {
+    return x(parseNoFuckingDateIsTheSame(d.date));
   })
-  .attr("cy",function(d){
+  .attr("cy", function(d) {
     return d3.select(this).attr("cy");
   });
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
