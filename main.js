@@ -46,6 +46,13 @@ svg.append("defs").append("clipPath")
    .attr("width", width)
    .attr("height", height);
 
+svg.append("rect")
+   .attr("class", "zoom")
+   .attr("width", width)
+   .attr("height", height)
+   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+   .call(zoom);
+
 var focus = svg.append("g")
                .attr("class", "focus")
                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -254,13 +261,6 @@ function renderCharts(cryptoArray, attackArray) {
     .call(brush)
     .call(brush.move, x.range());
 
-  svg.append("rect")
-    .attr("class", "zoom")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .call(zoom);
-
   dots.selectAll("dot")
     .data(attackArray[0])
     .enter().append("circle")
@@ -297,8 +297,8 @@ function renderCharts(cryptoArray, attackArray) {
       var x = coordinates[0];
       var y = coordinates[1];
       //  Position tooltip
-      tip.style("left", x + 25 + "px")
-      tip.style("top", y - 140 + "px")
+      tip.style("left", x + 145 + "px")
+      tip.style("top", y - 5 + "px")
       tip.style('display', 'block');
       //  ES6 TEMPLATE string, this is the values given to tooltip
       var html = `               
