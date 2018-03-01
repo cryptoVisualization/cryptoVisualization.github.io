@@ -121,13 +121,13 @@ function renderCharts(cryptoArray, attackArray) {
       tip.style('display', 'none');
     });
 
-  // ToDo Functions didn't append the paths correctly, find out the scoping problem
-  focus.append("path")
-    .datum(bitcoinData)
+  function appendCoin(data, color) {
+    focus.append("path")
+    .datum(data)
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", "green")
+    .attr("stroke", color)
     .attr("opacity", "0")
     .transition()
     .attr("opacity", "1")
@@ -136,96 +136,15 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("stroke-linejoin", "round")
     .attr("stroke-linecap", "round")
     .attr("stroke-width", 1.5);
+  }
 
-  focus.append("path")
-    .datum(ethereumData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "purple")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
-
-  focus.append("path")
-    .datum(iotaData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "silver")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
-
-  focus.append("path")
-    .datum(nemData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "green")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
-
-  focus.append("path")
-    .datum(rippleData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "blue")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
-
-  focus.append("path")
-    .datum(tetherData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "white")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
-
-  focus.append("path")
-    .datum(vrcData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "yellow")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+  appendCoin(bitcoinData, "green");
+  appendCoin(ethereumData, "purple");
+  appendCoin(iotaData, "silver");
+  appendCoin(nemData, "lime");
+  appendCoin(rippleData, "blue");
+  appendCoin(tetherData, "white");
+  appendCoin(vrcData, "yellow");
 
   focus.append("g")
     .attr("class", "axis axis--x")
@@ -235,21 +154,6 @@ function renderCharts(cryptoArray, attackArray) {
   focus.append("g")
     .attr("class", "axis axis--y")
     .call(yAxis);
-
-  context.append("path")
-    .datum(bitcoinData)
-    .attr("class", "line")
-    .attr("d", line2)
-    .attr("fill", "none")
-    .attr("stroke", "green")
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
     
   context.append("g")
     .attr("class", "axis axis--x")
