@@ -50,6 +50,11 @@ var focus = svg.append("g")
                .attr("class", "focus")
                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var dots = svg.append("g")
+              .attr("class", "dots")
+              .attr("clip-path", "url(#clip)")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 var context = svg.append("g")
                  .attr("class", "context")
                  .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
@@ -74,6 +79,10 @@ d3.queue()
         renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], [bitcoinAttackData]);
       }
   });
+
+function update(cryptoArray, y){
+  y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
+}
 
 function renderCharts(cryptoArray, attackArray) {
   // ToDo, Normalize date format to avoid verbosity
@@ -252,11 +261,11 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
 
-  svg.selectAll("dot")
+  dots.selectAll("dot")
     .data(attackArray[0])
     .enter().append("circle")
-    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left; })
-    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)) + margin.top; })
+    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)); })
+    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)); })
     .attr("class", function(d) {
       if (d.typeOfAttack == "Hack") {
         return "dot dot--green";
@@ -319,7 +328,12 @@ function brushed() {
   x.domain(s.map(x2.invert, x2));
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("transform", transform);
+  dots.selectAll(".dot").attr("cx",function(d){
+    return x(parseNoFuckingDateIsTheSame(d.date));
+  })
+  .attr("cy",function(d){
+    return d3.select(this).attr("cy");
+  });
   svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
     .scale(width / (s[1] - s[0]))
     .translate(-s[0], 0));
@@ -331,13 +345,13 @@ function zoomed() {
   x.domain(t.rescaleX(x2).domain());
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("transform", transform);
+  dots.selectAll(".dot").attr("cx", function(d) {
+    return x(parseNoFuckingDateIsTheSame(d.date));
+  })
+  .attr("cy", function(d) {
+    return d3.select(this).attr("cy");
+  });
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-}
-
-function transform(d) {
-  console.log(d3.select(this).attr("cy"))
-  return "translate(" + (x(parseNoFuckingDateIsTheSame(d.date)) + margin.left) + "," + d3.select(this).attr("cy") + ")";
 }
 
 function closeVal(bitcoinData, date) {
