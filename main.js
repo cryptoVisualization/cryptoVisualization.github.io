@@ -75,6 +75,10 @@ d3.queue()
       }
   });
 
+function update(cryptoArray, y){
+  y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
+}
+
 function renderCharts(cryptoArray, attackArray) {
   // ToDo, Normalize date format to avoid verbosity
   var bitcoinData  = cryptoArray[0].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
@@ -319,7 +323,12 @@ function brushed() {
   x.domain(s.map(x2.invert, x2));
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("transform", transform);
+  svg.selectAll(".dot").attr("cx",function(d){
+    return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left;
+  })
+  .attr("cy",function(d){
+    return d3.select(this).attr("cy");
+  });
   svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
     .scale(width / (s[1] - s[0]))
     .translate(-s[0], 0));
@@ -331,13 +340,13 @@ function zoomed() {
   x.domain(t.rescaleX(x2).domain());
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("transform", transform);
+  svg.selectAll(".dot").attr("cx",function(d){
+    return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left;
+  })
+  .attr("cy",function(d){
+    return d3.select(this).attr("cy");
+  });
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-}
-
-function transform(d) {
-  console.log(d3.select(this).attr("cy"))
-  return "translate(" + (x(parseNoFuckingDateIsTheSame(d.date)) + margin.left) + "," + d3.select(this).attr("cy") + ")";
 }
 
 function closeVal(bitcoinData, date) {
