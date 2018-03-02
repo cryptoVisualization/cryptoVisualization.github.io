@@ -1,0 +1,85 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+body {
+  background-color: #202026;
+  font-family: 'Work Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+  color: #ffffff;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+.crypto-logo-container {
+  max-width: 1000px;
+  display: flex;
+  justify-content: space-between;
+}
+.crypto-logo {
+  width: auto;
+  height: 75px;
+}
+.crypto-logo:not(:last-child) {
+  margin-right: 50px;
+}
+.crypto-logo:hover {
+  box-shadow: 0 0 10px 10px white;
+}
+.axis,
+.domain {
+  stroke: #ffffff;
+}
+.tick line {
+    stroke: white;
+}
+.line {
+  /* stroke: #32b23f; */
+  clip-path: url(#clip);
+}
+.dot {
+  cursor: pointer
+}
+.dot--green {
+  fill: rgba(0,255,0,.5);
+}
+.dot--purple {
+  fill: rgba(255,0,255,.5);
+}
+.dot--red {
+  fill: rgba(255,0,0,.5);
+}
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
