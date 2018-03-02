@@ -46,6 +46,8 @@ var ethLogo = document.querySelector("#eth-logo");
 var rippleLogo = document.querySelector("#ripple-logo");
 var nemLogo = document.querySelector("#nem-logo");
 var vericoinLogo = document.querySelector("#vericoin-logo");
+var  hackDivs = $(".hack--item");
+// var mtGoxHack= document.querySelector(".MtGox");
 
 svg.append("defs").append("clipPath")
    .attr("id", "clip")
@@ -72,13 +74,13 @@ d3.queue()
   .defer(d3.csv, "ripple.csv")
   .defer(d3.csv, "tether.csv")
   .defer(d3.csv, "vrc.csv")
-  .defer(d3.csv, "bitcoinAttacks.csv")
-  .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData, bitcoinAttackData) {
+  .defer(d3.csv, "bitcoinAttacksWithHeadlines3.csv")
+  .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData, bitcoinAttackDataWithHeadlines) {
       if (error) {
         console.error('Oh mein Gott! Something went terribly wrong: ' + error);
 
       } else {
-        renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], [bitcoinAttackData]);
+        renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], [bitcoinAttackDataWithHeadlines]);
       }
   });
 
@@ -152,6 +154,7 @@ function renderCharts(cryptoArray, attackArray) {
     });
 
 
+
          
     rippleLogo.addEventListener("click", function() {
       rippleLogo.classList.toggle("crypto-logo-clicked");   
@@ -197,9 +200,29 @@ function renderCharts(cryptoArray, attackArray) {
     });
 
 
-  
 
 
+
+
+    hackDivs.mouseover(function() {
+      var clickedDiv = "#" + $(this).closest('div').attr('id');
+      console.log(clickedDiv);
+      d3.select(clickedDiv)
+        .attr("class", "dot--selected");
+    });
+    hackDivs.mouseout(function() {
+      var clickedDiv = "#" + $(this).closest('div').attr('id');
+      if ( $(this).hasClass("hack")) {
+        d3.select(clickedDiv)
+        .attr("class", "dot dot--green");
+      } else if ( $(this).hasClass("scam")) {
+        d3.select(clickedDiv)
+        .attr("class", "dot dot--purple");
+      } else {
+        d3.select(clickedDiv)
+        .attr("class", "dot dot--red");
+      }
+    });
 
 
   focus.append("g")
@@ -243,6 +266,15 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .call(zoom);
 
+  
+
+
+  console.log(attackArray[0][1]);
+
+
+
+
+
   svg.selectAll("dot")
     .data(attackArray[0])
     .enter().append("circle")
@@ -257,6 +289,7 @@ function renderCharts(cryptoArray, attackArray) {
         return "dot dot--red"
       }
     })
+    .attr("id", function(d) { return d.id} )
     .attr("r", function(d) {
       if (d.lossUSD > 250000 && d.lossUSD < 1000000) {
         return 8;
@@ -343,6 +376,7 @@ function closeVal(bitcoinData, date) {
 
   return 0;
 } 
+
 
 
 
