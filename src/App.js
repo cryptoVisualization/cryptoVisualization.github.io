@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
   componentDidMount() {
-    var brush = d3.brush();
-    
     var svg = d3.select("svg"),
         margin  = {top: 20, right: 20, bottom: 410, left: 40},
         margin2 = {top: 430, right: 20, bottom: 330, left: 40},
@@ -15,7 +13,7 @@ class App extends Component {
         height  = +svg.attr("height") - margin.top - margin.bottom,
         height2 = +svg.attr("height") - margin2.top - margin2.bottom,
         height3 = +svg.attr("height") - margin3.top - margin3.bottom;
-    
+
     var parseDate = d3.timeParse("%-d/%-m/%Y");
     var parseTime = d3.timeParse("%d/%m/%Y");
     var parseNoFuckingDateIsTheSame = d3.timeParse("%Y-%m-%d");
@@ -93,19 +91,12 @@ class App extends Component {
       .defer(d3.csv, "bitcoinAttacks.csv")
       .defer(d3.csv, "formattedStack.csv")
       .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData, bitcoinAttackData, formattedData) {
-          if (error) {
-            console.error('Oh mein Gott! Something went terribly wrong: ' + error);
-          } else {
-            console.log("Before render")
-            console.log(bitcoinAttackData)
-            console.log(formattedData)
-            renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], bitcoinAttackData, formattedData);
-          }
+        if (error) {
+          console.error('Oh mein Gott! Something went terribly wrong: ' + error);
+        } else {
+          renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], bitcoinAttackData, formattedData);
+        }
       });
-    
-    // function update(cryptoArray, y){
-    //   y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
-    // }
     
     function renderCharts(cryptoArray, attackArray, formattedData) {
       // ToDo, Normalize date format to avoid verbosity
@@ -119,17 +110,17 @@ class App extends Component {
     
       for (var i = 0; i < formattedData.length; i++) {
         var d = formattedData[i];
-        formattedData[i].total = parseInt(d['Bitcoin']) + parseInt(d['Ethereum']) + parseInt(d['Ripple'])
+        formattedData[i].total = parseInt(d['Bitcoin'], 10) + parseInt(d['Ethereum'], 10) + parseInt(d['Ripple'], 10);
       }
 
       var keys = formattedData.columns.slice(1);
     
-      x.domain(d3.extent(bitcoinData, function(d) { return d.date; }));
+      x.domain(d3.extent(bitcoinData, function(d) { return +d.date; }));
       y.domain(d3.extent(bitcoinData, function(d) { return +d.close; }));
       x2.domain(x.domain());
       y2.domain(y.domain());
       x3.domain(x.domain());
-      y3.domain([0, d3.max(formattedData, function(d) { return d.total; })]).nice();
+      y3.domain([0, d3.max(formattedData, function(d) { return +d.total; })]).nice();
       z3.domain(keys)
     
       var tip = d3.select('body')
@@ -149,11 +140,11 @@ class App extends Component {
     
       appendCoin(bitcoinData, "green", line, focus, context);
       appendCoin(ethereumData, "purple", line, focus, context);
-      appendCoin(iotaData, "silver", line, focus, context);
-      appendCoin(nemData, "lime", line, focus, context);
-      appendCoin(rippleData, "blue", line, focus, context);
-      appendCoin(tetherData, "white", line, focus, context);
-      appendCoin(vrcData, "yellow", line, focus, context);
+      // appendCoin(iotaData, "silver", line, focus, context);
+      // appendCoin(nemData, "lime", line, focus, context);
+      // appendCoin(rippleData, "blue", line, focus, context);
+      // appendCoin(tetherData, "white", line, focus, context);
+      // appendCoin(vrcData, "yellow", line, focus, context);
     
       focus.append("g")
         .attr("class", "axis axis--x")
@@ -177,7 +168,8 @@ class App extends Component {
       dots.selectAll("dot")
         .data(attackArray)
         .enter().append("circle")
-        .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)); })
+        .attr("cx", function(d) { 
+          return x(parseNoFuckingDateIsTheSame(d.date)); })
         .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)); })
         .attr("class", addDotClass)
         .attr("r", dotSize)
@@ -223,7 +215,7 @@ class App extends Component {
         .attr("class", "axis fuck axis--x")
         .call(xAxis3);
     
-        stacks.append("g")
+      stacks.append("g")
         .attr("class", "axis axis--y")
         .call(yAxis3);
     
@@ -276,9 +268,9 @@ class App extends Component {
     }
     
     function addDotClass(d) {
-      if (d.typeOfAttack == "Hack") {
+      if (d.typeOfAttack === "Hack") {
         return "dot dot--green";
-      } else if (d.typeOfAttack == "Scam") {
+      } else if (d.typeOfAttack === "Scam") {
         return "dot dot--purple";
       } else {
         return "dot dot--red"
@@ -362,14 +354,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {/* <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Visualizing cryptocurrencies prices and frauds</h1>
-        </header> */}
-        {/* <p className="App-intro">
-          Blablablabalbalblablalabla
-        </p> */}
-        <svg width="960" height="500"></svg>
+        <svg width="960" height="800"></svg>
       </div>
     );
   }
