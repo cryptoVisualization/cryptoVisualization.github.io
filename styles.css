@@ -53,3 +53,7 @@ h1 {
   fill: none;
   pointer-events: all;
 }
+
+.bar {
+  fill: red;
+}
