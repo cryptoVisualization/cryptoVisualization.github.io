@@ -212,7 +212,7 @@ class App extends Component {
         .delay(1000);
     
       stacks.append("g")
-        .attr("class", "axis fuck axis--x")
+        .attr("class", "axis axis--x")
         .call(xAxis3);
     
       stacks.append("g")
