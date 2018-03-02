@@ -22,12 +22,8 @@
         letter-spacing: 1px;
       }
 
-      .hack--list {
-        color: #ffffff;
-      }
-      .hack--item {
-        border: 2px white solid;
-      }
+  
+
       .crypto-logo-container {
         max-width: 1000px;
         display: flex;
@@ -79,6 +75,21 @@
 
       .hack--list {
         width: 250px;
+        float: left;
+        text-align: center;
+        color: #ffffff;
+        height: 500px;
+        overflow: scroll;
+      }
+
+      .hack--item {
+        border: 2px white solid;
+        margin: 2px;
+      }
+
+      .hack--item:hover {
+        background-color: #48a0c9;
+
       }
       </style>
   </head>
@@ -108,16 +119,27 @@
       var brush = d3.brush();
     </script>
     <div class="hack--list">
+      <h3>LIST OF HACKS</h3>
       <div class="hack--item hack" id="a12">
         <h4 class="hack">Hack <em>$397.000.000</em></h4>
         <p>Hong Kong Bitcoin Exchange MyCoin “Lost”  $387 Million of Customers’ Money</p>
         <a href="https://www.ccn.com/hong-kong-bitcoin-exchange-mycoin-lost-387-million-customers-money/" class="btn btn-default">Read more</a>
       </div>
       <div class="hack--item hack" id="a13">
-        <h4>Hack <em>$473.000.000</h4>
+        <h4>Hack <em>$473.000.000</em></h4>
         <p>The Mt. Gox hack is the largest cryptocurrency disaster to ever occur to this date. In total, $473 million worth of Bitcoin was stolen from the exchange. This theft occured over several years.</p>
         <a href="http://storeofvalueblog.com/posts/cryptocurrency-hacks-so-far-august-24th/" class="btn btn-default">Read more</a>
       </div>
+      <div class="hack--item hack" id="a14">
+          <h4>Hack <em>$2.000.000</em></h4>
+          <p>The Digital currency exchange platform MintPal has suffered a successful hack attack that resulted in the loss millions of vericoins from its hot wallet.</p>
+          <a href="https://www.coindesk.com/bitcoin-protected-vericoin-stolen-mintpal-wallet-breach/" class="btn btn-default">Read more</a>
+        </div>
+        <div class="hack--item scam" id="a15">
+            <h4>Scam<em> $1.000.000</em></h4>
+            <p>Primedice, an online gaming site, learned a hard lesson when it lost $1 million in bitcoin to a hacker that exploited its RNG (random number generation) system last year. The company recently shared its experience on Medium, a website where people share stories. Stunna, the author of the story said the company wanted to share its experience so that others can learn from it.</p>
+            <a href="https://www.ccn.com/player-cheated-online-bitcoin-gaming-site-1-million-reward-offered-help/" class="btn btn-default">Read more</a>
+          </div>
       <div class="hack--item ponzi" id="a25">
         <h4>Bitfenix</h4>
       </div>
