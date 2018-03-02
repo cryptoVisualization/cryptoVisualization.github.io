@@ -4,18 +4,106 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
     <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+
+   
     <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+      body {
+        background-color: #202026;
+        font-family: 'Work Sans', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1 {
+        color: #ffffff;
+        font-weight: 100;
+        letter-spacing: 1px;
+      }
+
+  
+
+      .crypto-logo-container {
+        max-width: 1000px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .crypto-logo {
+        width: auto;
+        height: 75px;
+      }
+      .crypto-logo:not(:last-child) {
+        margin-right: 50px;
+      }
+
+      .crypto-logo-clicked {
+        box-shadow: 0 0 10px 10px white;
+      }
+      .axis,
+      .domain {
+        stroke: #ffffff;
+      }
+      .tick line {
+          stroke: white;
+      }
+      .line {
+        /* stroke: #32b23f; */
+        clip-path: url(#clip);
+      }
+      .dot {
+        cursor: pointer
+      }
+      .dot--green {
+        fill: rgba(0,255,0,.5);
+      }
+      .dot--selected {
+        fill: #ffffff;
+        border: solid 2px;
+      }
+      .dot--purple {
+        fill: rgba(255,0,255,.5);
+      }
+      .dot--red {
+        fill: rgba(255,0,0,.5);
+      }
+      .zoom {
+        cursor: move;
+        fill: none;
+        pointer-events: all;
+      }
+
+      .hack--list {
+        width: 250px;
+        float: left;
+        text-align: center;
+        color: #ffffff;
+        height: 500px;
+        overflow: scroll;
+      }
+
+      .hack--item {
+        border: 2px white solid;
+        margin: 2px;
+      }
+
+      .hack--item:hover {
+        background-color: #48a0c9;
+
+      }
+      </style>
+
     <link href="styles.css" rel="stylesheet">
   </head>
 
   <body>
     <h1>Visualizing cryptocurrencies price and fraud</h1>
     <div class="crypto-logo-container">
-        <img src="img/bit.png" class="crypto-logo"/>
-        <img src="img/eth.png" class="crypto-logo"/>
-        <img src="img/ripple.png" class="crypto-logo"/>
-        <img src="img/nem.png" class="crypto-logo"/>
-        <img src="img/vericoin.png" class="crypto-logo"/>
+        <img src="img/bit.png" class="crypto-logo crypto-logo-clicked" id="bitcoin-logo"/>
+        <img src="img/eth.png" class="crypto-logo crypto-logo-clicked" id="eth-logo"/>
+        <img src="img/ripple.png" class="crypto-logo crypto-logo-clicked" id="ripple-logo"/>
+        <img src="img/nem.png" class="crypto-logo crypto-logo-clicked" id="nem-logo"/>
+        <img src="img/vericoin.png" class="crypto-logo crypto-logo-clicked" id="vericoin-logo"/>
     </div>
 
     <svg width="960" height="800"></svg>
@@ -29,6 +117,41 @@
     <script src="https://d3js.org/d3-transition.v1.min.js"></script>
     <script src="https://d3js.org/d3-drag.v1.min.js"></script>
     <script src="https://d3js.org/d3-brush.v1.min.js"></script>
+    <script>
+      var brush = d3.brush();
+    </script>
+    <div class="hack--list">
+      <h3>LIST OF HACKS</h3>
+      <div class="hack--item hack" id="a12">
+        <h4 class="hack">Hack <em>$397.000.000</em></h4>
+        <p>Hong Kong Bitcoin Exchange MyCoin “Lost”  $387 Million of Customers’ Money</p>
+        <a href="https://www.ccn.com/hong-kong-bitcoin-exchange-mycoin-lost-387-million-customers-money/" class="btn btn-default">Read more</a>
+      </div>
+      <div class="hack--item hack" id="a13">
+        <h4>Hack <em>$473.000.000</em></h4>
+        <p>The Mt. Gox hack is the largest cryptocurrency disaster to ever occur to this date. In total, $473 million worth of Bitcoin was stolen from the exchange. This theft occured over several years.</p>
+        <a href="http://storeofvalueblog.com/posts/cryptocurrency-hacks-so-far-august-24th/" class="btn btn-default">Read more</a>
+      </div>
+      <div class="hack--item hack" id="a14">
+          <h4>Hack <em>$2.000.000</em></h4>
+          <p>The Digital currency exchange platform MintPal has suffered a successful hack attack that resulted in the loss millions of vericoins from its hot wallet.</p>
+          <a href="https://www.coindesk.com/bitcoin-protected-vericoin-stolen-mintpal-wallet-breach/" class="btn btn-default">Read more</a>
+        </div>
+        <div class="hack--item scam" id="a15">
+            <h4>Scam<em> $1.000.000</em></h4>
+            <p>Primedice, an online gaming site, learned a hard lesson when it lost $1 million in bitcoin to a hacker that exploited its RNG (random number generation) system last year. The company recently shared its experience on Medium, a website where people share stories. Stunna, the author of the story said the company wanted to share its experience so that others can learn from it.</p>
+            <a href="https://www.ccn.com/player-cheated-online-bitcoin-gaming-site-1-million-reward-offered-help/" class="btn btn-default">Read more</a>
+          </div>
+      <div class="hack--item ponzi" id="a25">
+        <h4>Bitfenix</h4>
+      </div>
+    </div>
+
+
+
+
+
+
     <script src="main.js"></script>
   </body>
 </html>
