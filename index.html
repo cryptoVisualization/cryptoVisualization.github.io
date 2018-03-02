@@ -5,63 +5,7 @@
     <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
     <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
-    <style>
-      body {
-        background-color: #202026;
-        font-family: 'Work Sans', sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      h1 {
-        color: #ffffff;
-        font-weight: 100;
-        letter-spacing: 1px;
-      }
-      .crypto-logo-container {
-        max-width: 1000px;
-        display: flex;
-        justify-content: space-between;
-      }
-      .crypto-logo {
-        width: auto;
-        height: 75px;
-      }
-      .crypto-logo:not(:last-child) {
-        margin-right: 50px;
-      }
-      .crypto-logo:hover {
-        box-shadow: 0 0 10px 10px white;
-      }
-      .axis,
-      .domain {
-        stroke: #ffffff;
-      }
-      .tick line {
-          stroke: white;
-      }
-      .line {
-        /* stroke: #32b23f; */
-        clip-path: url(#clip);
-      }
-      .dot {
-        cursor: pointer
-      }
-      .dot--green {
-        fill: rgba(0,255,0,.5);
-      }
-      .dot--purple {
-        fill: rgba(255,0,255,.5);
-      }
-      .dot--red {
-        fill: rgba(255,0,0,.5);
-      }
-      .zoom {
-        cursor: move;
-        fill: none;
-        pointer-events: all;
-      }
-      </style>
+    <link href="styles.css" rel="stylesheet">
   </head>
 
   <body>
@@ -74,7 +18,7 @@
         <img src="img/vericoin.png" class="crypto-logo"/>
     </div>
 
-    <svg width="960" height="500"></svg>
+    <svg width="960" height="800"></svg>
 
     <script src="https://d3js.org/d3-color.v1.min.js"></script>
     <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
@@ -85,9 +29,6 @@
     <script src="https://d3js.org/d3-transition.v1.min.js"></script>
     <script src="https://d3js.org/d3-drag.v1.min.js"></script>
     <script src="https://d3js.org/d3-brush.v1.min.js"></script>
-    <script>
-      var brush = d3.brush();
-    </script>
     <script src="main.js"></script>
   </body>
 </html>
