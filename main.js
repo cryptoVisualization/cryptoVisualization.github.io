@@ -1,3 +1,5 @@
+var brush = d3.brush();
+
 var svg = d3.select("svg"),
     margin  = {top: 20, right: 20, bottom: 110, left: 40},
     margin2 = {top: 430, right: 20, bottom: 30, left: 40},
@@ -55,9 +57,21 @@ svg.append("defs").append("clipPath")
    .attr("width", width)
    .attr("height", height);
 
+svg.append("rect")
+   .attr("class", "zoom")
+   .attr("width", width)
+   .attr("height", height)
+   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+   .call(zoom);
+
 var focus = svg.append("g")
                .attr("class", "focus")
                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var dots = svg.append("g")
+              .attr("class", "dots")
+              .attr("clip-path", "url(#clip)")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var context = svg.append("g")
                  .attr("class", "context")
@@ -83,6 +97,10 @@ d3.queue()
         renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], [bitcoinAttackDataWithHeadlines]);
       }
   });
+
+function update(cryptoArray, y){
+  y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
+}
 
 function renderCharts(cryptoArray, attackArray) {
   // ToDo, Normalize date format to avoid verbosity
@@ -113,6 +131,7 @@ function renderCharts(cryptoArray, attackArray) {
     .on('mouseout', function(d, i) {
       tip.style('display', 'none');
     });
+
 
   // ToDo Functions didn't append the paths correctly, find out the scoping problem
 
@@ -225,21 +244,13 @@ function renderCharts(cryptoArray, attackArray) {
     });
 
 
-  focus.append("g")
-    .attr("class", "axis axis--x")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-  focus.append("g")
-    .attr("class", "axis axis--y")
-    .call(yAxis);
-
-  context.append("path")
-    .datum(bitcoinData)
+  function appendCoin(data, color) {
+    focus.append("path")
+    .datum(data)
     .attr("class", "line")
-    .attr("d", line2)
+    .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", "green")
+    .attr("stroke", color)
     .attr("opacity", "0")
     .transition()
     .attr("opacity", "1")
@@ -248,6 +259,25 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("stroke-linejoin", "round")
     .attr("stroke-linecap", "round")
     .attr("stroke-width", 1.5);
+  }
+
+  appendCoin(bitcoinData, "green");
+  appendCoin(ethereumData, "purple");
+  appendCoin(iotaData, "silver");
+  appendCoin(nemData, "lime");
+  appendCoin(rippleData, "blue");
+  appendCoin(tetherData, "white");
+  appendCoin(vrcData, "yellow");
+
+
+  focus.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+  focus.append("g")
+    .attr("class", "axis axis--y")
+    .call(yAxis);
     
   context.append("g")
     .attr("class", "axis axis--x")
@@ -258,6 +288,7 @@ function renderCharts(cryptoArray, attackArray) {
     .attr("class", "brush")
     .call(brush)
     .call(brush.move, x.range());
+
 
   svg.append("rect")
     .attr("class", "zoom")
@@ -278,8 +309,8 @@ function renderCharts(cryptoArray, attackArray) {
   svg.selectAll("dot")
     .data(attackArray[0])
     .enter().append("circle")
-    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)) + margin.left; })
-    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)) + margin.top; })
+    .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)); })
+    .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)); })
     .attr("class", function(d) {
       if (d.typeOfAttack == "Hack") {
         return "dot dot--green";
@@ -312,8 +343,8 @@ function renderCharts(cryptoArray, attackArray) {
       var x = coordinates[0];
       var y = coordinates[1];
       //  Position tooltip
-      tip.style("left", x + 25 + "px")
-      tip.style("top", y - 140 + "px")
+      tip.style("left", x + 145 + "px")
+      tip.style("top", y - 5 + "px")
       tip.style('display', 'block');
       //  ES6 TEMPLATE string, this is the values given to tooltip
       var html = `               
@@ -343,7 +374,12 @@ function brushed() {
   x.domain(s.map(x2.invert, x2));
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("transform", transform);
+  dots.selectAll(".dot").attr("cx",function(d){
+    return x(parseNoFuckingDateIsTheSame(d.date));
+  })
+  .attr("cy",function(d){
+    return d3.select(this).attr("cy");
+  });
   svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
     .scale(width / (s[1] - s[0]))
     .translate(-s[0], 0));
@@ -355,13 +391,13 @@ function zoomed() {
   x.domain(t.rescaleX(x2).domain());
   focus.selectAll(".line").attr("d", line);
   focus.select(".axis--x").call(xAxis);
-  svg.selectAll(".dot").attr("transform", transform);
+  dots.selectAll(".dot").attr("cx", function(d) {
+    return x(parseNoFuckingDateIsTheSame(d.date));
+  })
+  .attr("cy", function(d) {
+    return d3.select(this).attr("cy");
+  });
   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-}
-
-function transform(d) {
-  console.log(d3.select(this).attr("cy"))
-  return "translate(" + (x(parseNoFuckingDateIsTheSame(d.date)) + margin.left) + "," + d3.select(this).attr("cy") + ")";
 }
 
 function closeVal(bitcoinData, date) {
