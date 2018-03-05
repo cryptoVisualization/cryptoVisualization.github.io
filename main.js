@@ -133,9 +133,7 @@ function renderCharts(cryptoArray, attackArray) {
 
   hackDivs.mouseover(function() {
     var clickedDiv = "#" + $(this).closest('div').attr('id');
-    console.log(clickedDiv);
-    d3.select(clickedDiv)
-      .attr("class", "dot--selected");
+    d3.select(clickedDiv).attr("class", "dot--selected");
   });
   hackDivs.mouseout(function() {
     var clickedDiv = "#" + $(this).closest('div').attr('id');
@@ -153,20 +151,36 @@ function renderCharts(cryptoArray, attackArray) {
 
   function appendCoin(data, id, color) {
     focus.append("path")
-    .datum(data)
-    .attr("class", "line")
-    .attr("id", id + "Line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", color)
-    .attr("opacity", "0")
-    .transition()
-    .attr("opacity", "1")
-    .duration(1000)
-    .delay(1000)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-linecap", "round")
-    .attr("stroke-width", 1.5);
+      .datum(data)
+      .attr("class", "line")
+      .attr("id", id + "Line")
+      .attr("d", line)
+      .attr("fill", "none")
+      .attr("stroke", color)
+      .attr("opacity", "0")
+      .transition()
+      .attr("opacity", "1")
+      .duration(1000)
+      .delay(1000)
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-width", 1.5);
+      
+    context.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("id", id + "MiniLine")
+      .attr("d", line2)
+      .attr("fill", "none")
+      .attr("stroke", color)
+      .attr("opacity", "0")
+      .transition()
+      .attr("opacity", "1")
+      .duration(1000)
+      .delay(1000)
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-width", 1.5);
 
     $("#" + id + "Logo").on("click", function() {
       $(this).toggleClass("crypto-logo-clicked");
@@ -267,7 +281,12 @@ function renderCharts(cryptoArray, attackArray) {
       tip.transition()
       .delay(800)
       .style('display', 'none');
-    });
+    })
+    .attr("opacity", "0")
+    .transition()
+    .attr("opacity", "1")
+    .duration(1000)
+    .delay(1000);
 }
 
 function brushed() {

@@ -78,4 +78,5 @@ h1 {
 
 .cryptoviz-container {
   display: flex;
+  height: 500px;
 }
