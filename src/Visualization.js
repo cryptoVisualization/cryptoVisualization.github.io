@@ -80,15 +80,15 @@ class Visualization extends Component {
                      .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
     
     d3.queue()
-      .defer(d3.csv, "bitcoin.csv")
-      .defer(d3.csv, "ethereum.csv")
-      .defer(d3.csv, "iota.csv")
-      .defer(d3.csv, "nem.csv")
-      .defer(d3.csv, "ripple.csv")
-      .defer(d3.csv, "tether.csv")
-      .defer(d3.csv, "vrc.csv")
-      .defer(d3.csv, "bitcoinAttacks.csv")
-      .defer(d3.csv, "formattedStack.csv")
+      .defer(d3.csv, "datasets/bitcoin.csv")
+      .defer(d3.csv, "datasets/ethereum.csv")
+      .defer(d3.csv, "datasets/iota.csv")
+      .defer(d3.csv, "datasets/nem.csv")
+      .defer(d3.csv, "datasets/ripple.csv")
+      .defer(d3.csv, "datasets/tether.csv")
+      .defer(d3.csv, "datasets/vrc.csv")
+      .defer(d3.csv, "datasets/bitcoinAttacks.csv")
+      .defer(d3.csv, "datasets/formattedStack.csv")
       .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData, bitcoinAttackData, formattedData) {
         if (error) {
           console.error('Oh mein Gott! Something went terribly wrong: ' + error);

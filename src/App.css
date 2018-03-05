@@ -1,10 +1,7 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  display: flex;
+  height: 100%;
 }
 
 .App-header {
@@ -22,19 +19,6 @@
   font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-
-body {
-  background-color: #202026;
-  font-family: 'Work Sans', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 h1 {
   color: #ffffff;
   font-weight: 100;
@@ -86,6 +70,35 @@ h1 {
 
 .navbar {
   background-color: #000000;
+  color: #FFFFFF;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  border-top: 1px solid #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+.navbar__item {
+  list-style: none;
+  padding: 1rem;
+  transition: background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+              color 0.55s ease;
+}
+
+.navbar__item:hover {
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+.navbar__item:hover .navbar__link {
+  color: #000000;
+}
+
+.navbar__link {
+  color: #FFFFFF;
+  padding: 1rem;
+  text-decoration: none;
 }
 
 .navbar span {
@@ -97,7 +110,4 @@ h1 {
   background: #cdcdcd;
   border-radius: 3px;  
   z-index: 1;
-  /* transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-              background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-              opacity 0.55s ease; */
 }
