@@ -351,7 +351,11 @@ class Visualization extends Component {
 
   render() {
     return (
+      <div className="section-container section-container--dark">
+      <section className="section">
       <svg width="960" height="800"></svg>
+      </section>
+    </div>
     );
   }
 }

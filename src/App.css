@@ -1,4 +1,12 @@
+.content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  position: relative;
+}
+
 .App {
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
   text-align: center;
   display: flex;
   height: 100%;
@@ -23,7 +31,18 @@ h1 {
   color: #128AF7;
   font-weight: 100;
   letter-spacing: 1px;
+  text-align: left;
+  margin-top: 0;
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
 }
+
+h2 {
+  font-weight: 600;
+  margin-bottom: 3rem;
+}
+
 .crypto-logo-container {
   max-width: 1000px;
   display: flex;
@@ -121,4 +140,33 @@ h1 {
   background: #cdcdcd;
   border-radius: 3px;  
   z-index: 1;
+}
+
+.section-container {
+  justify-content: center;
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.section-container--light {
+  color: #000000;
+  background: #FFFFFF;
+}
+
+.section-container--dark {
+  color: #FFFFFF;
+  background: radial-gradient(#232745, #1B2034);
+}
+
+.section {
+  line-height: 2;
+  max-width: 1000px;
+  text-align: left;
+  font-weight: 100;
+  margin: 1rem;
+}
+
+.section--centered {
+  text-align: center;
 }
