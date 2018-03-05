@@ -83,3 +83,21 @@ h1 {
   fill: none;
   pointer-events: all;
 }
+
+.navbar {
+  background-color: #000000;
+}
+
+.navbar span {
+  display: block;
+  width: 33px;
+  height: 4px;
+  margin-bottom: 5px;
+  position: relative;
+  background: #cdcdcd;
+  border-radius: 3px;  
+  z-index: 1;
+  /* transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+              background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
+              opacity 0.55s ease; */
+}
