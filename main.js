@@ -97,10 +97,6 @@ d3.queue()
       }
   });
 
-function update(cryptoArray, y){
-  y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
-}
-
 function renderCharts(cryptoArray, attackArray) {
   // ToDo, Normalize date format to avoid verbosity
   var bitcoinData  = cryptoArray[0].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
@@ -112,7 +108,7 @@ function renderCharts(cryptoArray, attackArray) {
   var vrcData      = cryptoArray[6].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
 
   x.domain(d3.extent(bitcoinData, function(d) { return d.date; }));
-  y.domain(d3.extent(bitcoinData, function(d) { return d.close; }));
+  y.domain([d3.min(rippleData, function(d) { return d.close; }),d3.max(bitcoinData, function(d) { return d.close; })]);
   x2.domain(x.domain());
   y2.domain(y.domain());
 
@@ -181,7 +177,7 @@ function renderCharts(cryptoArray, attackArray) {
       .attr("stroke-linejoin", "round")
       .attr("stroke-linecap", "round")
       .attr("stroke-width", 1.5);
-
+    
     $("#" + id + "Logo").on("click", function() {
       $(this).toggleClass("crypto-logo-clicked");
       //  Get opacity of bitcoin
@@ -192,8 +188,65 @@ function renderCharts(cryptoArray, attackArray) {
       } else {
         d3.select("#" + id + "Line").style("opacity", 1);
       }
+      filterY();      
     });
   }
+  // This function should go through the currencies and update the graph to only show the ones that haven't been filtered out
+  function filterY(){
+    console.log("The domain of y in our filter function:")
+    console.log(y.domain());
+    console.log("")
+    // min = the lowest value of the current domain (this should never change)
+    var min = y.domain()[0];
+    // Array to store our max-values
+    var maxArray = [];
+    // loop through the currencies
+    for(var i = 0; i < coinIDs.length; i++){
+      var opacity =  d3.select("#" + coinIDs[i].name + "Line").style("opacity");
+      // If the opacity is above zero it's not filtered out
+      if (opacity > 0) {
+        // get the max value from the currency and push it to the array  
+        maxArray.push(Math.max.apply(Math,coinIDs[i].data.map(function(o){return o.close;})));
+      }
+    }
+    // Now we get the max value of all current currencies
+    var max = Math.max.apply(Math,maxArray);
+    y.domain([min,max]);
+    focus.select(".axis--y")
+                    .transition().duration(1500)  // https://github.com/mbostock/d3/wiki/Transitions#wiki-d3_ease
+                    .call(yAxis);
+
+    focus.selectAll(".line").attr("d", line);
+    focus.select(".axis--x").call(xAxis);
+    dots.selectAll(".dot").attr("cx",function(d){
+      return x(parseNoFuckingDateIsTheSame(d.date));
+    })
+    .attr("cy",function(d){
+      console.log(d);
+      console.log(d.close);
+      return y(closeVal(bitcoinData, d.date));
+    });
+    svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+      .scale(width / (s[1] - s[0]))
+      .translate(-s[0], 0));
+  };
+  // list used by the above function to map coin-id's to their respective data
+  var coinIDs = [
+    { name: "bitcoin",
+      data: bitcoinData},
+    { name: "ethereum",
+      data: ethereumData},
+    { name: "iota",
+      data: iotaData},
+    { name: "nem",
+      data: nemData},
+    { name: "ripple",
+      data: rippleData},
+    { name: "tether",
+      data: tetherData},
+    { name: "vrc",
+      data: vrcData}
+  ];
 
   appendCoin(bitcoinData, "bitcoin", "green");
   appendCoin(ethereumData, "ethereum", "purple");
@@ -290,6 +343,9 @@ function renderCharts(cryptoArray, attackArray) {
 }
 
 function brushed() {
+  // console.log("The domain of y in our brushed function:")
+  // console.log(y.domain());
+  // console.log("")
   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return;
   var s = d3.event.selection || x2.range();
   x.domain(s.map(x2.invert, x2));
