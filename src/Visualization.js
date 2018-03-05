@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
+import scrollreveal from 'scrollreveal';
 import './App.css';
 
 class Visualization extends Component {
@@ -347,6 +348,9 @@ class Visualization extends Component {
     
       return 0;
     } 
+
+    var sr = scrollreveal();
+    sr.reveal('.section');
   }
 
   render() {

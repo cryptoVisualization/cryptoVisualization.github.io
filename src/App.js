@@ -4,6 +4,7 @@ import {
   NavLink,
   HashRouter
 } from "react-router-dom";
+import scrollreveal from 'scrollreveal';
 import Navbar from './Navbar.js';
 import Home from './Home.js';
 import Introduction from './Introduction.js';
@@ -16,12 +17,17 @@ import AboutUs from './AboutUs.js';
 import './App.css';
 
 class App extends Component {
+
+  componentDidMount() {
+    var sr = scrollreveal();
+    sr.reveal('.navbar__link', { duration: 2000 }, 50);
+  }
+
   render() {
     return (
       <HashRouter>
         <div className="App">
-          <Navbar/>
-          
+          <Navbar/>          
           <div className="content">
             <h1>CryptoViz.fun</h1>
             <Route exact path="/" component={Home}/>
