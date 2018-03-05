@@ -20,7 +20,7 @@
 }
 
 h1 {
-  color: #ffffff;
+  color: #128AF7;
   font-weight: 100;
   letter-spacing: 1px;
 }
@@ -69,21 +69,27 @@ h1 {
 }
 
 .navbar {
+  font-family: 'OCR', Arial;
   background-color: #000000;
   color: #FFFFFF;
   display: flex;
   margin: 0;
   padding: 0;
   flex-direction: column;
-  border-top: 1px solid #FFFFFF;
-  border-bottom: 1px solid #FFFFFF;
 }
 
 .navbar__item {
   list-style: none;
-  padding: 1rem;
   transition: background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
               color 0.55s ease;
+}
+
+.navbar__item:first-child {
+  border-top: 1px solid #FFFFFF;
+}
+
+.navbar__item:last-child {
+  border-bottom: 1px solid #FFFFFF;
 }
 
 .navbar__item:hover {
@@ -96,12 +102,17 @@ h1 {
 }
 
 .navbar__link {
+  display: block;
   color: #FFFFFF;
   padding: 1rem;
   text-decoration: none;
 }
 
-.navbar span {
+.navbar__menu {
+  border-bottom: 1px solid #FFFFFF;
+}
+
+.navbar__menu span {
   display: block;
   width: 33px;
   height: 4px;
