@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink } from "react-router-dom";
 import * as d3 from 'd3';
+import $ from "jquery";
 import scrollreveal from 'scrollreveal';
 import './App.css';
 
@@ -9,10 +10,6 @@ class Visualization extends Component {
   state = {
     attackArray: []
   };
-
-  componentWillReceiveProps(props) {
-    console.log(props);
-  }
 
   componentDidMount() {
     var that = this;
@@ -210,14 +207,15 @@ class Visualization extends Component {
           window.open(d["source"]); 
         })
         .on('mouseover', function(d, i) {
+          $("#" + d.id).addClass('hack-list__item--highlighted').scrollTop();
           tip.transition().duration(0);
             //  Get coordinates of mouse for tooltip positioning
           var coordinates = d3.mouse(this); 
           var x = coordinates[0];
           var y = coordinates[1];
           //  Position tooltip
-          tip.style("left", x + 145 + "px")
-          tip.style("top", y - 5 + "px")
+          tip.style("left", x + 25 + "px")
+          tip.style("top", y - 100 + "px")
           tip.style('display', 'block');
           //  ES6 TEMPLATE string, this is the values given to tooltip
           var html = `               
@@ -234,11 +232,12 @@ class Visualization extends Component {
           tip.html(html);     //  Give our template string to the tooltip for output
         })
         .on('mouseout', function(d, i) {  //  Mouseout
+          $("#" + d.id).removeClass('hack-list__item--highlighted');
           tip.transition()
           .delay(800)
           .style('display', 'none');
         });
-    
+
       stacks.append("g")
         .attr("class", "axis axis--x")
         .call(xAxis3);
@@ -364,9 +363,6 @@ class Visualization extends Component {
     
       return 0;
     } 
-
-    // var sr = scrollreveal();
-    // sr.reveal('.section');
   }
 
   render() {  
