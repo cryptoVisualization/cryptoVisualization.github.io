@@ -29,7 +29,7 @@ class App extends Component {
         <div className="App">
           <Navbar/>          
           <div className="content">
-            <h1>CryptoViz.fun</h1>
+            <NavLink to="/"><h1>CryptoViz.fun</h1></NavLink>
             <Route exact path="/" component={Home}/>
             <Route path="/introduction" component={Introduction}/>
             <Route path="/cryptocurrencies" component={Cryptocurrencies}/>

@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
-import scrollreveal from 'scrollreveal';
 import './App.css';
 
 class Home extends Component {
-
-  componentDidMount() {
-    var sr = scrollreveal();
-    sr.reveal('.section');
-  }
 
   render() {
     return (

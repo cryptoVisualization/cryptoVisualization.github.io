@@ -43,6 +43,16 @@ h2 {
   margin-bottom: 3rem;
 }
 
+.grid line {
+  stroke: #BDBDC1;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}
+
 .crypto-logo-container {
   max-width: 1000px;
   display: flex;
@@ -58,15 +68,22 @@ h2 {
 .crypto-logo:hover {
   box-shadow: 0 0 10px 10px white;
 }
-.axis,
-.domain {
-  stroke: #ffffff;
+.axis, .domain {
+  stroke: #BDBDC1;
+}
+.axis--y .domain {
+  stroke: none;
+}
+.axis--y .tick line {
+  stroke: none;
+}
+.tick text {
+  fill: #BDBDC1;
 }
 .tick line {
-    stroke: white;
+  stroke: #BDBDC1;
 }
 .line {
-  /* stroke: #32b23f; */
   clip-path: url(#clip);
 }
 .dot {
@@ -169,4 +186,9 @@ h2 {
 
 .section--centered {
   text-align: center;
+}
+
+.section--viz {
+  background: #141C33;
+  padding: 3rem;
 }

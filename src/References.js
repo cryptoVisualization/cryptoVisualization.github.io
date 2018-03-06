@@ -11,7 +11,7 @@ class References extends Component {
 
   render() {
     return (
-      <div className="section-container section-container--light">
+      <div className="section-container section-container--dark">
         <section className="section">
           <h2>References</h2>
           <p>A cryptocurrency is a digital currency based around the idea of using cryptography to allow for decentralization of the control of the currency. This works through the use of so called blockchains, which are essentially public digital ledgers holding a list of blocks that typically contain a cryptographic hash of the prior block in the blockchain along with transaction data and a timestamp. The blockchains work on the basis of proof-of-work schemes that use hashing algorithms to prove work done, as they can be used to create tasks that are demanding to solve but it is trivial to check whether a solution is correct. This proof of work allows for the protocol to be secure by design by always favoring a blockchain that has more work done as the valid blockchain.</p>

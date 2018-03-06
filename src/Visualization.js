@@ -14,9 +14,7 @@ class Visualization extends Component {
         height2 = +svg.attr("height") - margin2.top - margin2.bottom,
         height3 = +svg.attr("height") - margin3.top - margin3.bottom;
 
-    var parseDate = d3.timeParse("%-d/%-m/%Y");
-    var parseTime = d3.timeParse("%d/%m/%Y");
-    var parseNoFuckingDateIsTheSame = d3.timeParse("%Y-%m-%d");
+    var parseDate = d3.timeParse("%Y-%m-%d");
     
     var x  = d3.scaleTime().range([0, width]),
         x2 = d3.scaleTime().range([0, width]),
@@ -29,8 +27,8 @@ class Visualization extends Component {
     var xAxis  = d3.axisBottom(x),
         xAxis2 = d3.axisBottom(x2),
         xAxis3 = d3.axisTop(x3),
-        yAxis  = d3.axisLeft(y),
-        yAxis3 = d3.axisLeft(y3);
+        yAxis  = d3.axisLeft(y).ticks(5),
+        yAxis3 = d3.axisLeft(y3).ticks(5);
     
     var brush = d3.brushX()
                   .extent([[0, 0], [width, height2]])
@@ -49,6 +47,11 @@ class Visualization extends Component {
     var line2 = d3.line()
                   .x(function(d) { return x2(d.date); })
                   .y(function(d) { return y2(d.close); });
+
+    // gridlines in y axis function
+    function make_y_gridlines() {		
+      return d3.axisLeft(y).ticks(5)
+    }
     
     svg.append("defs").append("clipPath")
        .attr("id", "clip")
@@ -81,32 +84,35 @@ class Visualization extends Component {
                      .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
     
     d3.queue()
-      .defer(d3.csv, "datasets/bitcoin.csv")
-      .defer(d3.csv, "datasets/ethereum.csv")
-      .defer(d3.csv, "datasets/iota.csv")
-      .defer(d3.csv, "datasets/nem.csv")
-      .defer(d3.csv, "datasets/ripple.csv")
-      .defer(d3.csv, "datasets/tether.csv")
-      .defer(d3.csv, "datasets/vrc.csv")
-      .defer(d3.csv, "datasets/bitcoinAttacks.csv")
+      .defer(d3.csv, "datasets/coinmarketcap.csv")
+      .defer(d3.csv, "datasets/attacks.csv")
       .defer(d3.csv, "datasets/formattedStack.csv")
-      .await(function(error, bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData, bitcoinAttackData, formattedData) {
+      .await(function(error, coinmarketcap,  bitcoinAttackData, formattedData) {
         if (error) {
           console.error('Oh mein Gott! Something went terribly wrong: ' + error);
         } else {
-          renderCharts([bitcoinData, ethereumData, iotaData, nemData, rippleData, tetherData, vrcData], bitcoinAttackData, formattedData);
+          renderCharts(coinmarketcap, bitcoinAttackData, formattedData);
         }
       });
     
-    function renderCharts(cryptoArray, attackArray, formattedData) {
-      // ToDo, Normalize date format to avoid verbosity
-      var bitcoinData  = cryptoArray[0].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
-      var ethereumData = cryptoArray[1].map(function(d) { return { date: parseDate(d.date), close: +d.close } });
-      // var iotaData     = cryptoArray[2].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
-      // var nemData      = cryptoArray[3].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
-      // var rippleData   = cryptoArray[4].map(function(d) { return { date: parseTime(d.date), close: +d.close } });
-      // var tetherData   = cryptoArray[5].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
-      // var vrcData      = cryptoArray[6].map(function(d) { return { date: parseNoFuckingDateIsTheSame(d.date), close: +d.close } });
+    function renderCharts(coinmarketcap, attackArray, formattedData) {
+
+      var selectCoinData = function(coin) {
+        return coinmarketcap.filter(function(d) {return d.coin === coin})
+          .map(function(d) { 
+          d.date = parseDate(d.date); 
+          return d;
+        });
+      }
+
+      var bitcoinData   = selectCoinData("Bitcoin"),
+          ethereumData  = selectCoinData("Ethereum"),
+          iotaData      = selectCoinData("IOTA"),
+          nemData       = selectCoinData("NEM"),
+          rippleData    = selectCoinData("Ripple"),
+          tetherData    = selectCoinData("Tether"),
+          steemData     = selectCoinData("Steem"),
+          vrcData       = selectCoinData("VeriCoin");
     
       for (var i = 0; i < formattedData.length; i++) {
         var d = formattedData[i];
@@ -115,8 +121,8 @@ class Visualization extends Component {
 
       var keys = formattedData.columns.slice(1);
     
-      x.domain(d3.extent(bitcoinData, function(d) { return +d.date; }));
-      y.domain(d3.extent(bitcoinData, function(d) { return +d.close; }));
+      x.domain(d3.extent(coinmarketcap, function(d) { return +d.date; }));
+      y.domain(d3.extent(coinmarketcap, function(d) { return +d.close; }));
       x2.domain(x.domain());
       y2.domain(y.domain());
       x3.domain(x.domain());
@@ -137,15 +143,14 @@ class Visualization extends Component {
         .on('mouseout', function(d, i) {
           tip.style('display', 'none');
         });
-    
-      appendCoin(bitcoinData, "green", line, focus, context);
-      appendCoin(ethereumData, "purple", line, focus, context);
-      // appendCoin(iotaData, "silver", line, focus, context);
-      // appendCoin(nemData, "lime", line, focus, context);
-      // appendCoin(rippleData, "blue", line, focus, context);
-      // appendCoin(tetherData, "white", line, focus, context);
-      // appendCoin(vrcData, "yellow", line, focus, context);
-    
+
+      focus.append("g")			
+        .attr("class", "grid")
+        .call(make_y_gridlines()
+            .tickSize(-width)
+            .tickFormat("")
+        )
+
       focus.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
@@ -154,7 +159,31 @@ class Visualization extends Component {
       focus.append("g")
         .attr("class", "axis axis--y")
         .call(yAxis);
-        
+
+      // focus.append("text")
+      //   .attr("transform", "rotate(-90)")
+      //   .attr("y", 0 - margin.left)
+      //   .attr("x",0 - (height / 2))
+      //   .attr("dy", "1em")
+      //   .style("text-anchor", "middle")
+      //   .text("Price in USD");  
+
+      appendCoin(bitcoinData, "green", line, line2, focus, context);
+      appendCoin(ethereumData, "purple", line, line2, focus, context);
+      appendCoin(iotaData, "silver", line, line2, focus, context);
+      appendCoin(nemData, "lime", line, line2, focus, context);
+      appendCoin(rippleData, "blue", line, line2, focus, context);
+      appendCoin(tetherData, "white", line, line2, focus, context);
+      appendCoin(steemData, "red", line, line2, focus, context);
+      appendCoin(vrcData, "yellow", line, line2, focus, context);
+
+      context.append("g")			
+      .attr("class", "grid")
+      .call(make_y_gridlines()
+          .tickSize(-width)
+          .tickFormat("")
+      )
+
       context.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height2 + ")")
@@ -168,7 +197,7 @@ class Visualization extends Component {
       dots.selectAll("dot")
         .data(attackArray)
         .enter().append("circle")
-        .attr("cx", function(d) { return x(parseNoFuckingDateIsTheSame(d.date)); })
+        .attr("cx", function(d) { return x(parseDate(d.date)); })
         .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)); })
         .attr("class", addDotClass)
         .attr("r", dotSize)
@@ -203,12 +232,7 @@ class Visualization extends Component {
           tip.transition()
           .delay(800)
           .style('display', 'none');
-        })
-        .attr("opacity", "0")
-        .transition()
-        .attr("opacity", "1")
-        .duration(1000)
-        .delay(1000);
+        });
     
       stacks.append("g")
         .attr("class", "axis axis--x")
@@ -228,39 +252,28 @@ class Visualization extends Component {
         .data(function(d) {return d;})
         .enter().append("rect")
           .attr("class", "stack")
-          .attr("x", function(d) { return x3(parseNoFuckingDateIsTheSame(d.data.date)); })
+          .attr("x", function(d) { return x3(parseDate(d.data.date)); })
           .attr("y", 0)
           .attr("width", 25)
           .attr("height", function(d) { return y3(parseInt(d[1], 10)) - y3(parseInt(d[0], 10)); });
     }
     
-    function appendCoin(data, color, line, target, brushTarget) {
+    function appendCoin(data, color, line, line2, target, brushTarget) {
       target.append("path")
             .datum(data)
             .attr("class", "line")
             .attr("d", line)
             .attr("fill", 'red')
             .attr("stroke", color)
-            .attr("opacity", "0")
-            .transition()
-            .attr("opacity", "1")
-            .duration(1000)
-            .delay(1000)
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("stroke-width", 1.5);
     
       brushTarget.append("path")
             .datum(data)
-            .attr("class", "line")
             .attr("d", line2)
             .attr("fill", "none")
             .attr("stroke", color)
-            .attr("opacity", "0")
-            .transition()
-            .attr("opacity", "1")
-            .duration(1000)
-            .delay(1000)
             .attr("stroke-linejoin", "round")
             .attr("stroke-linecap", "round")
             .attr("stroke-width", 2);
@@ -297,13 +310,13 @@ class Visualization extends Component {
       focus.select(".axis--x").call(xAxis);
       stacks.select(".axis--x").call(xAxis3);
       dots.selectAll(".dot").attr("cx",function(d){
-        return x(parseNoFuckingDateIsTheSame(d.date));
+        return x(parseDate(d.date));
       })
       .attr("cy",function(d){
         return d3.select(this).attr("cy");
       });
       stacks.selectAll(".stack").attr("x", function(d){
-        return x(parseNoFuckingDateIsTheSame(d.data.date));
+        return x(parseDate(d.data.date));
       })
       .attr("y",function(d){
         return d3.select(this).attr("y");
@@ -322,13 +335,13 @@ class Visualization extends Component {
       focus.select(".axis--x").call(xAxis);
       stacks.select(".axis--x").call(xAxis3);
       dots.selectAll(".dot").attr("cx", function(d) {
-        return x(parseNoFuckingDateIsTheSame(d.date));
+        return x(parseDate(d.date));
       })
       .attr("cy", function(d) {
         return d3.select(this).attr("cy");
       });
       stacks.selectAll(".stack").attr("x", function(d){
-        return x(parseNoFuckingDateIsTheSame(d.data.date));
+        return x(parseDate(d.data.date));
       })
       .attr("y",function(d){
         return d3.select(this).attr("y");
@@ -338,7 +351,7 @@ class Visualization extends Component {
     
     function closeVal(bitcoinData, date) {
       var found = bitcoinData.filter(function(datapoint) {
-        var newDate = parseNoFuckingDateIsTheSame(date);
+        var newDate = parseDate(date);
         return datapoint.date && newDate && datapoint.date.getTime() === newDate.getTime();
       });
     
@@ -356,8 +369,8 @@ class Visualization extends Component {
   render() {
     return (
       <div className="section-container section-container--dark">
-      <section className="section">
-      <svg width="960" height="800"></svg>
+      <section className="section section--viz">
+        <svg width="960" height="800"></svg>
       </section>
     </div>
     );
