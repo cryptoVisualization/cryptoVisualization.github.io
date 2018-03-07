@@ -43,67 +43,6 @@ h2 {
   margin-bottom: 3rem;
 }
 
-.grid line {
-  stroke: #BDBDC1;
-  stroke-opacity: 0.7;
-  shape-rendering: crispEdges;
-}
-
-.grid path {
-  stroke-width: 0;
-}
-
-.crypto-logo-container {
-  max-width: 1000px;
-  display: flex;
-  justify-content: space-between;
-}
-.crypto-logo {
-  width: auto;
-  height: 75px;
-}
-.crypto-logo:not(:last-child) {
-  margin-right: 50px;
-}
-.crypto-logo:hover {
-  box-shadow: 0 0 10px 10px white;
-}
-.axis, .domain {
-  stroke: #BDBDC1;
-}
-.axis--y .domain {
-  stroke: none;
-}
-.axis--y .tick line {
-  stroke: none;
-}
-.tick text {
-  fill: #BDBDC1;
-}
-.tick line {
-  stroke: #BDBDC1;
-}
-.line {
-  clip-path: url(#clip);
-}
-.dot {
-  cursor: pointer
-}
-.dot--green {
-  fill: rgba(0,255,0,.5);
-}
-.dot--purple {
-  fill: rgba(255,0,255,.5);
-}
-.dot--red {
-  fill: rgba(255,0,0,.5);
-}
-.zoom {
-  cursor: move;
-  fill: none;
-  pointer-events: all;
-}
-
 .navbar {
   font-family: 'OCR', Arial;
   background-color: #000000;

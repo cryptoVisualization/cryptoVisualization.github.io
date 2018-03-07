@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import $ from "jquery";
 import scrollreveal from 'scrollreveal';
 import './App.css';
+import './Visualization.css';
 
 class Visualization extends Component {
   
