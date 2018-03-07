@@ -233,6 +233,7 @@ h2 {
   color: #FFFFFF;
 }
 
+.hack-list__item--highlighted .hack-list__button,
 .hack-list__item:hover .hack-list__button {
   background-color: #181F37;
 }
