@@ -212,7 +212,12 @@ class Visualization extends Component {
           window.open(d["source"]); 
         })
         .on('mouseover', function(d, i) {
-          $("#" + d.id).addClass('hack-list__item--highlighted').scrollTop();
+          var $hackList = $('.hack-list');
+          var $hackItem = $("#" + d.id);
+
+          $hackItem.addClass('hack-list__item--highlighted');
+          $hackList.animate({scrollTop: $hackItem.offset().top + $hackList.scrollTop()}, 1000);
+
           tip.transition().duration(0);
             //  Get coordinates of mouse for tooltip positioning
           var coordinates = d3.mouse(this); 
