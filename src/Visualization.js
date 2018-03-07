@@ -8,6 +8,9 @@ import BitCoinLogo from "./assets/images/btc.svg"
 import EthereumLogo from "./assets/images/eth.svg"
 import vrcLogo from "./assets/images/vrc.svg"
 import xrcLogo from "./assets/images/xrp.svg"
+import iotaLogo from "./assets/images/iota.svg"
+import steemLogo from "./assets/images/steem.svg"
+import nemLogo from "./assets/images/nem.svg"
 
 class Visualization extends Component {
   
@@ -95,6 +98,8 @@ class Visualization extends Component {
                      .attr("class", "stacks")
                      .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
     
+    var global_coinmarketcap = {}
+
     d3.queue()
       .defer(d3.csv, "datasets/coinmarketcap.csv")
       .defer(d3.csv, "datasets/attacks.csv")
@@ -108,6 +113,8 @@ class Visualization extends Component {
       });
     
     function renderCharts(coinmarketcap, attackArray, formattedData) {
+
+      global_coinmarketcap = coinmarketcap;
 
       that.setState({attackArray})
 
@@ -275,6 +282,7 @@ class Visualization extends Component {
       target.append("path")
             .datum(data)
             .attr("class", "line")
+            .attr("id",data[0].coin)
             .attr("d", line)
             .attr("fill", 'red')
             .attr("stroke", color)
@@ -375,6 +383,67 @@ class Visualization extends Component {
     
       return 0;
     } 
+
+    var currentCurrencies = [
+      "Bitcoin",
+      "Ethereum",
+      "Ripple",
+      "NEM",
+      "VeriCoin",
+      "IOTA",
+      "Steem"
+    ];
+
+    function update(){
+      var minmaxArray = []
+      for(var i = 0; i < currentCurrencies.length; i++){
+        var currencyData = d3.select("#"+currentCurrencies[i]).data();
+        minmaxArray.push(d3.extent(currencyData[0], function(d) { 
+          return +d.close; }));
+      }
+      var min = d3.min(minmaxArray,function(d){ return d[0]})
+      var max = d3.max(minmaxArray,function(d){ return d[1]});
+      console.log(min + " " + max);
+      y.domain([min,max]);
+      focus.select(".axis--y").transition().duration(1500).call(yAxis);
+
+      var s = d3.event.selection || x2.range();
+      x.domain(s.map(x2.invert, x2));
+      x3.domain(s.map(x2.invert, x2));
+      focus.selectAll(".line").attr("d", line);
+      focus.select(".axis--x").call(xAxis);
+      stacks.select(".axis--x").call(xAxis3);
+
+      dots.selectAll(".dot")
+      .attr("display", function(d){
+        if(currentCurrencies.includes(d.cryptocurrency)){
+          return "block";
+        } else {
+          return "none";
+        }
+      })
+      .attr("cx",function(d){
+        return x(parseDate(d.date));
+      })
+      .attr("cy",function(d) { 
+        return y(closeVal(d.cryptocurrency,global_coinmarketcap, d.date)); 
+      });
+    }
+
+    d3.selectAll(".crypto-logo").on("click",function(){
+      var currency = this.dataset.cryptocurrency;
+      var currencyLine = d3.select("#"+currency);
+      if(currentCurrencies.includes(currency)){
+        currentCurrencies = currentCurrencies.filter(o => o !== currency);
+        currencyLine.classed("invisible",true);
+        this.classList.remove("crypto-logo-clicked");
+      } else {
+        currentCurrencies.push(currency);
+        currencyLine.classed("invisible",false);
+        this.classList.add("crypto-logo-clicked");
+      }
+      update();
+    });
   }
 
   render() {  
@@ -401,11 +470,14 @@ class Visualization extends Component {
     return (
         <div className="section-container section-container--dark">
           <section className="section section--viz">
-          <div class="crypto-logo-container">
-            <img src={BitCoinLogo} className="crypto-logo crypto-logo-clicked" id="bitcoinLogo"/>
-            <img src={EthereumLogo} className="crypto-logo crypto-logo-clicked" id="ethereumLogo"/>
-            <img src={vrcLogo} className="crypto-logo crypto-logo-clicked" id="vrcLogo"/>
-            <img src={xrcLogo} className="crypto-logo crypto-logo-clicked" id="rippleLogo"/>
+          <div className="crypto-logo-container">
+            <img src={BitCoinLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Bitcoin" id="bitcoinLogo" alt=""/>
+            <img src={EthereumLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Ethereum" id="ethereumLogo" alt=""/>
+            <img src={xrcLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Ripple" id="rippleLogo" alt=""/>
+            <img src={nemLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="NEM" id="nemLogo" alt=""/>
+            <img src={vrcLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="VeriCoin" id="vrcLogo" alt=""/>
+            <img src={iotaLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="IOTA" id="iotaLogo" alt=""/>
+            <img src={steemLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Steem" id="steemLogo" alt=""/>
           </div>
             <svg width="960" height="800"></svg>
           </section>

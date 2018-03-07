@@ -215,6 +215,23 @@ h2 {
   box-shadow: 0 10px 10px 10px rgba(0,0,0,.5); 
 }
 
+.crypto-logo {
+  width: auto;
+  height: 75px;
+  cursor: pointer;
+}
+.crypto-logo:not(:last-child) {
+  margin-right: 50px;
+}
+.crypto-logo.crypto-logo-clicked,
+.crypto-logo.crypto-logo-clicked:hover {
+  box-shadow: 0 0 10px 10px white;
+}
+
+.crypto-logo:hover {
+  box-shadow: 0 0 10px 10px white;
+}
+
 .hack-list__item--highlighted,
 .hack-list__item:hover {
   color: #FFFFFF;
@@ -237,3 +254,6 @@ h2 {
   background-color: #181F37;
 }
 
+.invisible{
+  display: none;
+}
