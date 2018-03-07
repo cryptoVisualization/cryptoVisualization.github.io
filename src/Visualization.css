@@ -14,52 +14,113 @@
   display: flex;
   justify-content: space-between;
 }
+
 .crypto-logo {
   width: auto;
   height: 75px;
 }
+
 .crypto-logo:not(:last-child) {
   margin-right: 50px;
 }
+
 .crypto-logo:hover {
   box-shadow: 0 0 10px 10px white;
 }
+
 .axis, .domain {
   stroke: #BDBDC1;
 }
+
 .axis--y .domain {
   stroke: none;
 }
+
 .axis--y .tick line {
   stroke: none;
 }
+
 .tick text {
   fill: #BDBDC1;
 }
+
 .tick line {
   stroke: #BDBDC1;
 }
+
 .line {
   clip-path: url(#clip);
 }
+
 .dot {
   cursor: pointer
 }
+
 .dot--green {
   fill: rgba(0,255,0,.5);
 }
+
 .dot--purple {
   fill: rgba(255,0,255,.5);
 }
+
 .dot--red {
   fill: rgba(255,0,0,.5);
 }
+
 .zoom {
   cursor: move;
   fill: none;
   pointer-events: all;
 }
+
 .selection {
   stroke: #5183fb;
   fill: rgba(81,131,251, 0.5);
 }
+
+.hack-list {
+  height: 100vh;
+  overflow: auto;
+}
+
+.hack-list__item {
+  color: #9AA1A9;
+  background-color: #181F37;
+  padding: 1rem;
+  font-weight: 100;
+  text-align: left;
+  line-height: 1.5;
+  background-image: url('assets/images/hack-item-bg.png');
+  background-size: cover;
+  background-position: bottom;
+  transition: background-color .3s ease;
+}
+
+.hack-list__item:not(:last-child) {
+  box-shadow: 0 10px 10px 10px rgba(0,0,0,.5);
+}
+
+.hack-list__item--highlighted,
+.hack-list__item:hover {
+  color: #FFFFFF;
+  background-color: #1b5593;
+}
+
+.hack-list__button {
+  border-radius: 25px;
+  display: inline;
+  justify-content: center;
+  flex: 1 0 auto;
+  align-content: center;
+  background-color: #1b5593;
+  padding: .25rem 1rem;
+  text-decoration: none;
+  color: #FFFFFF;
+}
+
+.hack-list__item--highlighted .hack-list__button,
+.hack-list__item:hover .hack-list__button {
+  background-color: #181F37;
+}
+
