@@ -200,7 +200,9 @@ class Visualization extends Component {
         .data(attackArray)
         .enter().append("circle")
         .attr("cx", function(d) { return x(parseDate(d.date)); })
-        .attr("cy", function(d) { return y(closeVal(bitcoinData, d.date)); })
+        .attr("cy", function(d) { 
+          console.log(d);
+          return y(closeVal(d.cryptocurrency,coinmarketcap, d.date)); })
         .attr("class", addDotClass)
         .attr("r", dotSize)
         .on("click", function(d) {
@@ -214,21 +216,20 @@ class Visualization extends Component {
           var x = coordinates[0];
           var y = coordinates[1];
           //  Position tooltip
-          tip.style("left", x + 25 + "px")
-          tip.style("top", y - 100 + "px")
-          tip.style('display', 'block');
+          tip.style("left", x-85 + "px")
+          .style("top", y-25 + "px")
+          .style('display', 'block')
+          .style("width","250px")
+          .style("border-radius","10px")
+          .style("background-color","#181F37")
+          .style("color","#FFFFFF");
           //  ES6 TEMPLATE string, this is the values given to tooltip
           var html = `               
-          <h4>Click on circle to go to news article </h4>
-            <ul>    
-              <li>Platform of hack: ${d.platform} </li>
-              <li>Date of hack: ${d.date} </li>
-              <li>Loss in dollars: ${d.lossUSD} </li>
-              <li>Loss in BTC: ${d.lossCrypti} </li>
-              <li>Type of hack: ${d.typeOfAttack} </li>
-              <li>Closing price of this day: ${d.close} </li>
-            </ul>
-          `;
+            <table>    
+              <tr><td>platform:\t</td><td>${d.platform} </td></tr>
+              <tr><td>date:</td><td>${d.date} </td></tr>
+              <tr><td>loss:</td><td>$${d.lossUSD} </td></tr>
+            </table>`;
           tip.html(html);     //  Give our template string to the tooltip for output
         })
         .on('mouseout', function(d, i) {  //  Mouseout
@@ -353,10 +354,13 @@ class Visualization extends Component {
       context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
     }
     
-    function closeVal(bitcoinData, date) {
-      var found = bitcoinData.filter(function(datapoint) {
+    function closeVal(cryptocurrency,coinmarketcap,date){
+
+      var found = coinmarketcap.filter(function(datapoint) {
         var newDate = parseDate(date);
-        return datapoint.date && newDate && datapoint.date.getTime() === newDate.getTime();
+        var correctDate = datapoint.date && newDate && datapoint.date.getTime() === newDate.getTime();
+        var correctCurrency = datapoint.coin == cryptocurrency
+        return correctDate && correctCurrency;
       });
     
       if (found.length) return found[0].close;
