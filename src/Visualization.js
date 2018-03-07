@@ -4,6 +4,10 @@ import * as d3 from 'd3';
 import $ from "jquery";
 import scrollreveal from 'scrollreveal';
 import './App.css';
+import BitCoinLogo from "./assets/images/btc.svg"
+import EthereumLogo from "./assets/images/eth.svg"
+import vrcLogo from "./assets/images/vrc.svg"
+import xrcLogo from "./assets/images/xrp.svg"
 
 class Visualization extends Component {
   
@@ -201,7 +205,6 @@ class Visualization extends Component {
         .enter().append("circle")
         .attr("cx", function(d) { return x(parseDate(d.date)); })
         .attr("cy", function(d) { 
-          console.log(d);
           return y(closeVal(d.cryptocurrency,coinmarketcap, d.date)); })
         .attr("class", addDotClass)
         .attr("r", dotSize)
@@ -391,14 +394,20 @@ class Visualization extends Component {
     }
 
     return (
-      <div className="section-container section-container--dark">
-      <section className="section section--viz">
-        <svg width="960" height="800"></svg>
-      </section>
-      <div className="hack-list">
-        {renderList(this.state.attackArray)}
-      </div>
-    </div>
+        <div className="section-container section-container--dark">
+          <section className="section section--viz">
+          <div class="crypto-logo-container">
+            <img src={BitCoinLogo} className="crypto-logo crypto-logo-clicked" id="bitcoinLogo"/>
+            <img src={EthereumLogo} className="crypto-logo crypto-logo-clicked" id="ethereumLogo"/>
+            <img src={vrcLogo} className="crypto-logo crypto-logo-clicked" id="vrcLogo"/>
+            <img src={xrcLogo} className="crypto-logo crypto-logo-clicked" id="rippleLogo"/>
+          </div>
+            <svg width="960" height="800"></svg>
+          </section>
+          <div className="hack-list">
+            {renderList(this.state.attackArray)}
+          </div>
+        </div>
     );
   }
 }
