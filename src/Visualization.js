@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import $ from "jquery";
 import scrollreveal from 'scrollreveal';
 import './App.css';
+<<<<<<< HEAD
 import BitCoinLogo from "./assets/images/btc.svg"
 import EthereumLogo from "./assets/images/eth.svg"
 import vrcLogo from "./assets/images/vrc.svg"
@@ -11,6 +12,9 @@ import xrcLogo from "./assets/images/xrp.svg"
 import iotaLogo from "./assets/images/iota.svg"
 import steemLogo from "./assets/images/steem.svg"
 import nemLogo from "./assets/images/nem.svg"
+=======
+import './Visualization.css';
+>>>>>>> add94649a260f2f5ee92d2445332d16d807d012a
 
 class Visualization extends Component {
   
@@ -243,7 +247,7 @@ class Visualization extends Component {
             <table>    
               <tr><td>platform:\t</td><td>${d.platform} </td></tr>
               <tr><td>date:</td><td>${d.date} </td></tr>
-              <tr><td>loss:</td><td>$${d.lossUSD} </td></tr>
+              <tr><td>loss:</td><td>${formatUSD(d.lossUSD)}</td></tr>
             </table>`;
           tip.html(html);     //  Give our template string to the tooltip for output
         })
@@ -452,9 +456,9 @@ class Visualization extends Component {
       var className = `hack-list__item ${hack.typeOfAttack} ${hack.cryptocurrency}`
       return (
         <div className={className} id={hack.id} key={i}>
-          <div className="hack">{hack.typeOfAttack} {hack.lossUSD} USD</div>
+          <div className="hack">{hack.typeOfAttack} {formatUSD(hack.lossUSD)}</div>
           <div>Coin: {hack.cryptocurrency}</div>
-          <div>Platform: {hack.platform}</div>
+          { hack.platform && <div>Platform: {hack.platform}</div> }
           <p>{hack.headline}</p>
           <a href={hack.source} className="hack-list__button" target="_blank">Read more</a>
         </div>        
@@ -487,6 +491,10 @@ class Visualization extends Component {
         </div>
     );
   }
+}
+
+function formatUSD(number) {
+  return new Intl.NumberFormat('en-EN', { style: 'currency', currency: 'USD' }).format(number);
 }
 
 export default Visualization;
