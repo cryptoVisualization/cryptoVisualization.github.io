@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import $ from "jquery";
 import scrollreveal from 'scrollreveal';
 import './App.css';
-<<<<<<< HEAD
+
 import BitCoinLogo from "./assets/images/btc.svg"
 import EthereumLogo from "./assets/images/eth.svg"
 import vrcLogo from "./assets/images/vrc.svg"
@@ -12,9 +12,10 @@ import xrcLogo from "./assets/images/xrp.svg"
 import iotaLogo from "./assets/images/iota.svg"
 import steemLogo from "./assets/images/steem.svg"
 import nemLogo from "./assets/images/nem.svg"
-=======
+import tetherLogo from "./assets/images/tether.svg"
+
+
 import './Visualization.css';
->>>>>>> add94649a260f2f5ee92d2445332d16d807d012a
 
 class Visualization extends Component {
   
@@ -22,7 +23,9 @@ class Visualization extends Component {
     attackArray: []
   };
 
+  
   componentDidMount() {
+    var currencyMap = {}
     var that = this;
     var svg = d3.select("svg"),
         margin  = {top: 20, right: 20, bottom: 410, left: 40},
@@ -130,15 +133,28 @@ class Visualization extends Component {
         });
       }
 
-      var bitcoinData   = selectCoinData("Bitcoin"),
-          ethereumData  = selectCoinData("Ethereum"),
-          iotaData      = selectCoinData("IOTA"),
-          nemData       = selectCoinData("NEM"),
-          rippleData    = selectCoinData("Ripple"),
-          tetherData    = selectCoinData("Tether"),
-          steemData     = selectCoinData("Steem"),
-          vrcData       = selectCoinData("VeriCoin");
+
+
+    var bitcoinData   = selectCoinData("Bitcoin"),
+        ethereumData  = selectCoinData("Ethereum"),
+        iotaData      = selectCoinData("IOTA"),
+        nemData       = selectCoinData("NEM"),
+        rippleData    = selectCoinData("Ripple"),
+        tetherData    = selectCoinData("Tether"),
+        steemData     = selectCoinData("Steem"),
+        vrcData       = selectCoinData("VeriCoin");
     
+    currencyMap = {
+      "Bitcoin" : bitcoinData,
+      "Ethereum" : ethereumData,
+      "IOTA" : iotaData,
+      "NEM" : nemData,
+      "Ripple" : rippleData,
+      "Tether" : tetherData,
+      "Steem" : steemData,
+      "VeriCoin" : vrcData,
+    };
+
       for (var i = 0; i < formattedData.length; i++) {
         var d = formattedData[i];
         formattedData[i].total = parseInt(d['Bitcoin'], 10) + parseInt(d['Ethereum'], 10) + parseInt(d['Ripple'], 10);
@@ -216,7 +232,7 @@ class Visualization extends Component {
         .enter().append("circle")
         .attr("cx", function(d) { return x(parseDate(d.date)); })
         .attr("cy", function(d) { 
-          return y(closeVal(d.cryptocurrency,coinmarketcap, d.date)); })
+          return y(closeVal(d.cryptocurrency,coinmarketcap, d.date,d)); })
         .attr("class", addDotClass)
         .attr("r", dotSize)
         .on("click", function(d) {
@@ -349,6 +365,7 @@ class Visualization extends Component {
       svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
         .scale(width / (s[1] - s[0]))
         .translate(-s[0], 0));
+      update();
     }
     
     function zoomed() {
@@ -374,17 +391,26 @@ class Visualization extends Component {
       context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
     }
     
-    function closeVal(cryptocurrency,coinmarketcap,date){
-
-      var found = coinmarketcap.filter(function(datapoint) {
+    function closeVal(cryptocurrency,coinmarketcap,date,d){
+      if(d.close){
+        return d.close;
+      }
+      var currency = currencyMap[cryptocurrency];
+      if(!currency){
+        d.close = 0
+        return 0;
+      }
+      var found = currency.filter(function(datapoint) {
         var newDate = parseDate(date);
         var correctDate = datapoint.date && newDate && datapoint.date.getTime() === newDate.getTime();
-        var correctCurrency = datapoint.coin == cryptocurrency
-        return correctDate && correctCurrency;
+        // var correctCurrency = datapoint.coin == cryptocurrency
+        return correctDate;
       });
-    
-      if (found.length) return found[0].close;
-    
+      if (found.length){
+        d.close = found[0].close;
+        return found[0].close;
+      }
+      d.close = 0;
       return 0;
     } 
 
@@ -395,29 +421,34 @@ class Visualization extends Component {
       "NEM",
       "VeriCoin",
       "IOTA",
-      "Steem"
+      "Steem",
+      "Tether"
     ];
 
     function update(){
       var minmaxArray = []
       for(var i = 0; i < currentCurrencies.length; i++){
-        var currencyData = d3.select("#"+currentCurrencies[i]).data();
-        minmaxArray.push(d3.extent(currencyData[0], function(d) { 
+        var currencyData = d3.select("#"+currentCurrencies[i]).data()[0];
+        currencyData = currencyData.filter(
+          function(d){
+            return (d.date.getTime() < x.domain()[1].getTime()) && 
+            (d.date.getTime() > x.domain()[0].getTime());});
+        minmaxArray.push(d3.extent(currencyData, function(d) { 
           return +d.close; }));
       }
       var min = d3.min(minmaxArray,function(d){ return d[0]})
       var max = d3.max(minmaxArray,function(d){ return d[1]});
-      console.log(min + " " + max);
+      
       y.domain([min,max]);
+      
       focus.select(".axis--y").transition().duration(1500).call(yAxis);
-
       var s = d3.event.selection || x2.range();
       x.domain(s.map(x2.invert, x2));
       x3.domain(s.map(x2.invert, x2));
       focus.selectAll(".line").attr("d", line);
       focus.select(".axis--x").call(xAxis);
       stacks.select(".axis--x").call(xAxis3);
-
+      console.time();
       dots.selectAll(".dot")
       .attr("display", function(d){
         if(currentCurrencies.includes(d.cryptocurrency)){
@@ -430,8 +461,9 @@ class Visualization extends Component {
         return x(parseDate(d.date));
       })
       .attr("cy",function(d) { 
-        return y(closeVal(d.cryptocurrency,global_coinmarketcap, d.date)); 
+        return y(closeVal(d.cryptocurrency,global_coinmarketcap,d.date,d)); 
       });
+      console.timeEnd();
     }
 
     d3.selectAll(".crypto-logo").on("click",function(){
@@ -482,6 +514,7 @@ class Visualization extends Component {
             <img src={vrcLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="VeriCoin" id="vrcLogo" alt=""/>
             <img src={iotaLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="IOTA" id="iotaLogo" alt=""/>
             <img src={steemLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Steem" id="steemLogo" alt=""/>
+            <img src={tetherLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Tether" id="tetherLogo" alt=""/>
           </div>
             <svg width="960" height="800"></svg>
           </section>
