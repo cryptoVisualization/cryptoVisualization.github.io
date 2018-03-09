@@ -1,8 +1,8 @@
 {
-  "main.css": "static/css/main.ec68acda.css",
-  "main.css.map": "static/css/main.ec68acda.css.map",
-  "main.js": "static/js/main.521184dd.js",
-  "main.js.map": "static/js/main.521184dd.js.map",
+  "main.css": "static/css/main.54b58f7e.css",
+  "main.css.map": "static/css/main.54b58f7e.css.map",
+  "main.js": "static/js/main.d0eccb4e.js",
+  "main.js.map": "static/js/main.d0eccb4e.js.map",
   "static/media/OCRAStd.eot": "static/media/OCRAStd.d8ff12d9.eot",
   "static/media/OCRAStd.svg": "static/media/OCRAStd.7af17270.svg",
   "static/media/OCRAStd.ttf": "static/media/OCRAStd.0c5b2366.ttf",
@@ -27,5 +27,13 @@
   "static/media/OpenSans-SemiBold.svg": "static/media/OpenSans-SemiBold.aaa4ff93.svg",
   "static/media/OpenSans-SemiBold.ttf": "static/media/OpenSans-SemiBold.1113ce5b.ttf",
   "static/media/OpenSans-SemiBold.woff": "static/media/OpenSans-SemiBold.729e6a0d.woff",
-  "static/media/OpenSans-SemiBold.woff2": "static/media/OpenSans-SemiBold.dbee1c42.woff2"
+  "static/media/OpenSans-SemiBold.woff2": "static/media/OpenSans-SemiBold.dbee1c42.woff2",
+  "static/media/btc.svg": "static/media/btc.59c2fb88.svg",
+  "static/media/eth.svg": "static/media/eth.df575e3b.svg",
+  "static/media/iota.svg": "static/media/iota.bd250dc8.svg",
+  "static/media/nem.svg": "static/media/nem.4779f35d.svg",
+  "static/media/steem.svg": "static/media/steem.36c2752c.svg",
+  "static/media/tether.svg": "static/media/tether.a5be1416.svg",
+  "static/media/vrc.svg": "static/media/vrc.698058b8.svg",
+  "static/media/xrp.svg": "static/media/xrp.2befbd54.svg"
 }
