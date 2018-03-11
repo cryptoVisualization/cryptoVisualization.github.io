@@ -10,6 +10,7 @@ class Introduction extends Component {
   }
 
   render() {
+    console.log(this.props)
     return (
       <div className="section-container section-container--dark">
         <section className="section">

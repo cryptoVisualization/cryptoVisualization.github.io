@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from "react-router-dom";
+import { cloneDeep } from "lodash";
 import * as d3 from 'd3';
 import $ from "jquery";
 import scrollreveal from 'scrollreveal';
@@ -110,66 +111,111 @@ class Visualization extends Component {
     d3.queue()
       .defer(d3.csv, "datasets/coinmarketcap.csv")
       .defer(d3.csv, "datasets/attacks.csv")
-      .defer(d3.csv, "datasets/formattedStack.csv")
-      .await(function(error, coinmarketcap,  bitcoinAttackData, formattedData) {
+      .await(function(error, coinmarketcap,  bitcoinAttackData) {
         if (error) {
           console.error('Oh mein Gott! Something went terribly wrong: ' + error);
         } else {
-          renderCharts(coinmarketcap, bitcoinAttackData, formattedData);
+          renderCharts(coinmarketcap, bitcoinAttackData);
         }
       });
     
-    function renderCharts(coinmarketcap, attackArray, formattedData) {
+    function renderCharts(coinmarketcap, attackArray) {
 
       global_coinmarketcap = coinmarketcap;
+
+      var plottedCoins = ['Bitcoin', 'Vericoin', 'NEM', 'IOTA', 'Ethereum', 'Tether', 'Steem'];
+
+      var yearMonthAttacks = cloneDeep(attackArray).map(function(d) {
+        d.date = d.date.slice(0,7);
+        return d;
+      })
+
+      var processedMonths = [];
+
+      var attackAggregated = yearMonthAttacks.map(function(d) {
+        if (!processedMonths.includes(d.date)) {
+          processedMonths.push(d.date);
+          
+          var monthHacks = yearMonthAttacks.filter(function(a) {
+            return a.date === d.date; 
+          });
+
+          var reduceCoin = function(arr, coin) {
+            return arr.reduce(function(acc, curr) {
+              return curr.cryptocurrency === coin 
+                ? acc + parseInt(curr.lossUSD)
+                : acc
+            }, 0)
+          }
+
+          var result = {
+            date: new Date(d.date),
+            Bitcoin: reduceCoin(monthHacks, 'Bitcoin'),
+            Vericoin: reduceCoin(monthHacks, 'Vericoin'),
+            NEM: reduceCoin(monthHacks, 'NEM'),
+            IOTA: reduceCoin(monthHacks, 'IOTA'),
+            Ethereum: reduceCoin(monthHacks, 'Ethereum'),
+            Tether: reduceCoin(monthHacks, 'Tether'),
+            Steem: reduceCoin(monthHacks, 'Steem'),
+          }
+
+          result.total = result.Bitcoin 
+                       + result.Vericoin
+                       + result.NEM
+                       + result.IOTA
+                       + result.Ethereum
+                       + result.Tether
+                       + result.Steem;
+
+          return result;
+        }
+      });
+
+      var aggregatedData = attackAggregated.filter(function(d) {
+        return d !== undefined && d.total !== 0
+      });
 
       that.setState({attackArray})
 
       var selectCoinData = function(coin) {
-        return coinmarketcap.filter(function(d) {return d.coin === coin})
-          .map(function(d) { 
+        return coinmarketcap.filter(function(d) {
+          return d.coin === coin;
+        }).map(function(d) { 
           d.date = parseDate(d.date); 
           return d;
         });
       }
 
+      var bitcoinData   = selectCoinData("Bitcoin"),
+          ethereumData  = selectCoinData("Ethereum"),
+          iotaData      = selectCoinData("IOTA"),
+          nemData       = selectCoinData("NEM"),
+          rippleData    = selectCoinData("Ripple"),
+          tetherData    = selectCoinData("Tether"),
+          steemData     = selectCoinData("Steem"),
+          vrcData       = selectCoinData("VeriCoin");
 
+      currencyMap = {
+        "Bitcoin" : bitcoinData,
+        "Ethereum" : ethereumData,
+        "IOTA" : iotaData,
+        "NEM" : nemData,
+        "Ripple" : rippleData,
+        "Tether" : tetherData,
+        "Steem" : steemData,
+        "VeriCoin" : vrcData,
+      };
 
-    var bitcoinData   = selectCoinData("Bitcoin"),
-        ethereumData  = selectCoinData("Ethereum"),
-        iotaData      = selectCoinData("IOTA"),
-        nemData       = selectCoinData("NEM"),
-        rippleData    = selectCoinData("Ripple"),
-        tetherData    = selectCoinData("Tether"),
-        steemData     = selectCoinData("Steem"),
-        vrcData       = selectCoinData("VeriCoin");
-    
-    currencyMap = {
-      "Bitcoin" : bitcoinData,
-      "Ethereum" : ethereumData,
-      "IOTA" : iotaData,
-      "NEM" : nemData,
-      "Ripple" : rippleData,
-      "Tether" : tetherData,
-      "Steem" : steemData,
-      "VeriCoin" : vrcData,
-    };
-
-      for (var i = 0; i < formattedData.length; i++) {
-        var d = formattedData[i];
-        formattedData[i].total = parseInt(d['Bitcoin'], 10) + parseInt(d['Ethereum'], 10) + parseInt(d['Ripple'], 10);
-      }
-
-      var keys = formattedData.columns.slice(1);
+      var keys = [...plottedCoins];
     
       x.domain(d3.extent(coinmarketcap, function(d) { return +d.date; }));
       y.domain(d3.extent(coinmarketcap, function(d) { return +d.close; }));
       x2.domain(x.domain());
       y2.domain(y.domain());
       x3.domain(x.domain());
-      y3.domain([0, d3.max(formattedData, function(d) { return +d.total; })]).nice();
+      y3.domain(d3.extent(aggregatedData, function(d) { return +d.total; }));
       z3.domain(keys)
-    
+
       var tip = d3.select('body')
         .append('div')
         .attr('class', 'tip')
@@ -178,12 +224,8 @@ class Visualization extends Component {
         .style('background-color', 'rgba(255,255,255,.9)')
         .style('position', 'absolute')
         .style('display', 'none')
-        .on('mouseover', function(d, i) {
-          tip.transition().duration(0);
-        })
-        .on('mouseout', function(d, i) {
-          tip.style('display', 'none');
-        });
+        .on('mouseover', function(d, i) { tip.transition().duration(0); })
+        .on('mouseout', function(d, i) { tip.style('display', 'none'); });
 
       focus.append("g")			
         .attr("class", "grid")
@@ -230,9 +272,10 @@ class Visualization extends Component {
       dots.selectAll("dot")
         .data(attackArray)
         .enter().append("circle")
-        .attr("cx", function(d) { return x(parseDate(d.date)); })
+        .attr("cx", function(d) { 
+          return x(parseDate(d.date)); })
         .attr("cy", function(d) { 
-          return y(closeVal(d.cryptocurrency,coinmarketcap, d.date,d)); })
+          return y(closeVal(d.cryptocurrency,coinmarketcap, d.date, d)); })
         .attr("class", addDotClass)
         .attr("r", dotSize)
         .on("click", function(d) {
@@ -243,7 +286,7 @@ class Visualization extends Component {
           var $hackItem = $("#" + d.id);
 
           $hackItem.addClass('hack-list__item--highlighted');
-          $hackList.animate({scrollTop: $hackItem.offset().top + $hackList.scrollTop()}, 1000);
+          $hackList.dequeue().animate({scrollTop: $hackItem.offset().top + $hackList.scrollTop()}, 1000);
 
           tip.transition().duration(0);
             //  Get coordinates of mouse for tooltip positioning
@@ -281,21 +324,24 @@ class Visualization extends Component {
       stacks.append("g")
         .attr("class", "axis axis--y")
         .call(yAxis3);
-    
+
       stacks.append("g")
         .attr("clip-path", "url(#clip)")
         .selectAll("g")
-        .data(d3.stack().keys(keys)(formattedData))
+        .data(d3.stack().keys(keys)(aggregatedData))
         .enter().append("g")
-          .attr("fill", function(d) { return z3(d.key); })
+          .attr("fill", function(d) { 
+            return z3(d.key); })
         .selectAll("rect")
         .data(function(d) {return d;})
         .enter().append("rect")
           .attr("class", "stack")
-          .attr("x", function(d) { return x3(parseDate(d.data.date)); })
-          .attr("y", 0)
+          .attr("x", function(d) { 
+            return x3(d.data.date); })
+          .attr("y", 1)
           .attr("width", 25)
-          .attr("height", function(d) { return y3(parseInt(d[1], 10)) - y3(parseInt(d[0], 10)); });
+          .attr("height", function(d) { 
+            return y3(parseInt(d[1], 10)) - y3(parseInt(d[0], 10)); });
     }
     
     function appendCoin(data, color, line, line2, target, brushTarget) {
@@ -357,7 +403,7 @@ class Visualization extends Component {
         return d3.select(this).attr("cy");
       });
       stacks.selectAll(".stack").attr("x", function(d){
-        return x(parseDate(d.data.date));
+        return x(d.data.date);
       })
       .attr("y",function(d){
         return d3.select(this).attr("y");
@@ -383,7 +429,7 @@ class Visualization extends Component {
         return d3.select(this).attr("cy");
       });
       stacks.selectAll(".stack").attr("x", function(d){
-        return x(parseDate(d.data.date));
+        return x(d.data.date);
       })
       .attr("y",function(d){
         return d3.select(this).attr("y");

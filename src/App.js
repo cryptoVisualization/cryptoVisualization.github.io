@@ -31,7 +31,7 @@ class App extends Component {
           <div className="content">
             <NavLink to="/"><h1>CryptoViz.fun</h1></NavLink>
             <Route exact path="/" component={Home}/>
-            <Route path="/introduction" component={Introduction}/>
+            <Route path="/introduction" render={(props) => (<Introduction test="hi" {...props}/>)}/>
             <Route path="/cryptocurrencies" component={Cryptocurrencies}/>
             <Route path="/attacks" component={Attacks}/>
             <Route path="/visualization" component={Visualization}/>
