@@ -133,4 +133,6 @@ h2 {
   padding: 1rem;
   align-self: flex-start;
   flex: .7;
+  margin-left: auto;
+  margin-right: auto;
 }

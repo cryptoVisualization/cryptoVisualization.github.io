@@ -13,7 +13,6 @@ import steemLogo from "./assets/images/steem.svg"
 import nemLogo from "./assets/images/nem.svg"
 import tetherLogo from "./assets/images/tether.svg"
 
-
 import './Visualization.css';
 
 class Visualization extends Component {
