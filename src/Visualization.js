@@ -218,12 +218,12 @@ class Visualization extends Component {
 
       var tip = d3.select('body')
         .append('div')
-        .attr('class', 'tip')
-        .style('border', '1px solid steelblue')
-        .style('padding', '5px')
-        .style('background-color', 'rgba(255,255,255,.9)')
+        .attr('class', 'tooltip')
+        // .style('border', '1px solid steelblue')
+        // .style('padding', '10px')
+        // .style('background-color', 'rgba(255,255,255,.9)')
         .style('position', 'absolute')
-        .style('display', 'none')
+        // .style('display', 'none')
         .on('mouseover', function(d, i) { tip.transition().duration(0); })
         .on('mouseout', function(d, i) { tip.style('display', 'none'); });
 
@@ -294,27 +294,27 @@ class Visualization extends Component {
           var x = coordinates[0];
           var y = coordinates[1];
           //  Position tooltip
-          tip.style("left", x-85 + "px")
-          .style("top", y-25 + "px")
+          tip.style("left", x + "px")
+          .style("top", y + "px")
           .style('display', 'block')
-          .style("width","250px")
-          .style("border-radius","10px")
-          .style("background-color","#181F37")
-          .style("color","#FFFFFF");
+          // .style("width","150px")
+          // .style("border-radius","10px")
+          // .style("background-color","#181F37")
+          // .style("color","#FFFFFF");
           //  ES6 TEMPLATE string, this is the values given to tooltip
           var html = `               
-            <table>    
-              <tr><td>platform:\t</td><td>${d.platform} </td></tr>
-              <tr><td>date:</td><td>${d.date} </td></tr>
-              <tr><td>loss:</td><td>${formatUSD(d.lossUSD)}</td></tr>
-            </table>`;
+            <div>    
+              <div>${d.platform} </div>
+              <div>${d.date} </div>
+              <div>${formatUSD(d.lossUSD)}</div>
+            </div>`;
           tip.html(html);     //  Give our template string to the tooltip for output
         })
         .on('mouseout', function(d, i) {  //  Mouseout
           $("#" + d.id).removeClass('hack-list__item--highlighted');
           tip.transition()
-          .delay(800)
-          .style('display', 'none');
+            .delay(800)
+            .style('display', 'none');
         });
 
       stacks.append("g")
@@ -491,11 +491,12 @@ class Visualization extends Component {
       var s = d3.event.selection || x2.range();
       x.domain(s.map(x2.invert, x2));
       x3.domain(s.map(x2.invert, x2));
-      focus.selectAll(".line").attr("d", line);
+      focus.selectAll(".line").transition().duration(1500).attr("d", line);
       focus.select(".axis--x").call(xAxis);
       stacks.select(".axis--x").call(xAxis3);
       console.time();
       dots.selectAll(".dot")
+      .transition().duration(1500)
       .attr("display", function(d){
         if(currentCurrencies.includes(d.cryptocurrency)){
           return "block";

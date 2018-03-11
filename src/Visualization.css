@@ -82,6 +82,7 @@
 .hack-list {
   height: 100vh;
   overflow: auto;
+  flex: .3;
 }
 
 .hack-list__item {
@@ -143,4 +144,19 @@
 
 .invisible{
   display: none;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #1D263F;
+  font-weight: 100;
+  color: #FFFFFF;
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 0 0 0 100px;
+  line-height: 1.5;
+}
+
+.section--viz svg {
+  position: relative;
 }

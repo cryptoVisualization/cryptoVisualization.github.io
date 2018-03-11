@@ -131,4 +131,6 @@ h2 {
 .section--viz {
   background: #141C33;
   padding: 3rem;
+  align-self: flex-start;
+  flex: .7;
 }
