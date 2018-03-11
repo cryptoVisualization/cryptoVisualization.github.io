@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { NavLink } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import * as d3 from 'd3';
 import $ from "jquery";
-import scrollreveal from 'scrollreveal';
 import './App.css';
 
 import BitCoinLogo from "./assets/images/btc.svg"
@@ -24,7 +22,6 @@ class Visualization extends Component {
     attackArray: []
   };
 
-  
   componentDidMount() {
     var currencyMap = {}
     var that = this;
@@ -45,8 +42,8 @@ class Visualization extends Component {
         y  = d3.scaleLinear().range([height, 0]),
         y2 = d3.scaleLinear().range([height2, 0]),
         y3 = d3.scaleLinear().rangeRound([0, height3]),
-        z3 = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-    
+        z3 = d3.scaleOrdinal().range(["orange", "purple", "silver", "lime", "blue", "white", "red", "yellow"]);
+
     var xAxis  = d3.axisBottom(x),
         xAxis2 = d3.axisBottom(x2),
         xAxis3 = d3.axisTop(x3),
@@ -132,6 +129,14 @@ class Visualization extends Component {
 
       var processedMonths = [];
 
+      var reduceCoin = function(arr, coin) {
+        return arr.reduce(function(acc, curr) {
+          return curr.cryptocurrency === coin 
+            ? acc + parseInt(curr.lossUSD, 10)
+            : acc
+        }, 0)
+      }
+
       var attackAggregated = yearMonthAttacks.map(function(d) {
         if (!processedMonths.includes(d.date)) {
           processedMonths.push(d.date);
@@ -139,14 +144,6 @@ class Visualization extends Component {
           var monthHacks = yearMonthAttacks.filter(function(a) {
             return a.date === d.date; 
           });
-
-          var reduceCoin = function(arr, coin) {
-            return arr.reduce(function(acc, curr) {
-              return curr.cryptocurrency === coin 
-                ? acc + parseInt(curr.lossUSD)
-                : acc
-            }, 0)
-          }
 
           var result = {
             date: new Date(d.date),
@@ -168,6 +165,8 @@ class Visualization extends Component {
                        + result.Steem;
 
           return result;
+        } else {
+          return undefined
         }
       });
 
@@ -218,14 +217,7 @@ class Visualization extends Component {
 
       var tip = d3.select('body')
         .append('div')
-        .attr('class', 'tooltip')
-        // .style('border', '1px solid steelblue')
-        // .style('padding', '10px')
-        // .style('background-color', 'rgba(255,255,255,.9)')
-        .style('position', 'absolute')
-        // .style('display', 'none')
-        .on('mouseover', function(d, i) { tip.transition().duration(0); })
-        .on('mouseout', function(d, i) { tip.style('display', 'none'); });
+        .attr('class', 'tooltip');
 
       focus.append("g")			
         .attr("class", "grid")
@@ -243,7 +235,7 @@ class Visualization extends Component {
         .attr("class", "axis axis--y")
         .call(yAxis);
 
-      appendCoin(bitcoinData, "green", line, line2, focus, context);
+      appendCoin(bitcoinData, "orange", line, line2, focus, context);
       appendCoin(ethereumData, "purple", line, line2, focus, context);
       appendCoin(iotaData, "silver", line, line2, focus, context);
       appendCoin(nemData, "lime", line, line2, focus, context);
@@ -297,10 +289,6 @@ class Visualization extends Component {
           tip.style("left", x + "px")
           .style("top", y + "px")
           .style('display', 'block')
-          // .style("width","150px")
-          // .style("border-radius","10px")
-          // .style("background-color","#181F37")
-          // .style("color","#FFFFFF");
           //  ES6 TEMPLATE string, this is the values given to tooltip
           var html = `               
             <div>    
@@ -513,17 +501,17 @@ class Visualization extends Component {
       console.timeEnd();
     }
 
-    d3.selectAll(".crypto-logo").on("click",function(){
+    d3.selectAll(".crypto-logo-block").on("click",function(){
       var currency = this.dataset.cryptocurrency;
       var currencyLine = d3.select("#"+currency);
       if(currentCurrencies.includes(currency)){
         currentCurrencies = currentCurrencies.filter(o => o !== currency);
         currencyLine.classed("invisible",true);
-        this.classList.remove("crypto-logo-clicked");
+        this.classList.remove("crypto-logo--active");
       } else {
         currentCurrencies.push(currency);
         currencyLine.classed("invisible",false);
-        this.classList.add("crypto-logo-clicked");
+        this.classList.add("crypto-logo--active");
       }
       update();
     });
@@ -552,19 +540,49 @@ class Visualization extends Component {
 
     return (
         <div className="section-container section-container--dark">
-          <section className="section section--viz">
-          <div className="crypto-logo-container">
-            <img src={BitCoinLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Bitcoin" id="bitcoinLogo" alt=""/>
-            <img src={EthereumLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Ethereum" id="ethereumLogo" alt=""/>
-            <img src={xrcLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Ripple" id="rippleLogo" alt=""/>
-            <img src={nemLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="NEM" id="nemLogo" alt=""/>
-            <img src={vrcLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="VeriCoin" id="vrcLogo" alt=""/>
-            <img src={iotaLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="IOTA" id="iotaLogo" alt=""/>
-            <img src={steemLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Steem" id="steemLogo" alt=""/>
-            <img src={tetherLogo} className="crypto-logo crypto-logo-clicked" data-cryptocurrency="Tether" id="tetherLogo" alt=""/>
+          <div className="viz-wrap">
+            <div className="crypto-logo-container">
+              <div className="crypto-logo-container-row">
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="Bitcoin" id="bitcoinLogo">
+                  <img src={BitCoinLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--orange">Bitcoin</div>
+                </div>
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="Ethereum" id="ethereumLogo">
+                  <img src={EthereumLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--purple">Ethereum</div>
+                </div>
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="Ripple" id="rippleLogo">
+                  <img src={xrcLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--blue">Ripple</div>
+                </div>
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="NEM" id="nemLogo">
+                  <img src={nemLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--lime">NEM</div>
+                </div>
+              </div>
+              <div className="crypto-logo-container-row">
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="VeriCoin" id="vrcLogo">
+                  <img src={vrcLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--yellow">VeriCoin</div>
+                </div>
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="IOTA" id="iotaLogo">
+                  <img src={iotaLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--silver">IOTA</div>
+                </div>
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="Steem" id="steemLogo">
+                  <img src={steemLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--red">Steem</div>
+                </div>
+                <div className="crypto-logo-block crypto-logo--active" data-cryptocurrency="Tether" id="tetherLogo">
+                  <img src={tetherLogo} className="crypto-logo" alt=""/>
+                  <div className="crypto-name crypto-name--white">Tether</div>
+                </div>
+              </div>
+            </div>
+            <section className="section section--viz">
+              <svg width="960" height="800"></svg>
+            </section>
           </div>
-            <svg width="960" height="800"></svg>
-          </section>
           <div className="hack-list">
             {renderList(this.state.attackArray)}
           </div>

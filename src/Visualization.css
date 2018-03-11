@@ -9,25 +9,6 @@
   stroke-width: 0;
 }
 
-.crypto-logo-container {
-  max-width: 1000px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.crypto-logo {
-  width: auto;
-  height: 75px;
-}
-
-.crypto-logo:not(:last-child) {
-  margin-right: 50px;
-}
-
-.crypto-logo:hover {
-  box-shadow: 0 0 10px 10px white;
-}
-
 .axis, .domain {
   stroke: #BDBDC1;
 }
@@ -53,19 +34,25 @@
 }
 
 .dot {
-  cursor: pointer
+  fill: rgba(255,255,255,0);
+  cursor: pointer;
+  stroke-width: 3px;
+}
+
+.dot:hover {
+  fill: rgba(255,255,255,.5);
 }
 
 .dot--green {
-  fill: rgba(0,255,0,.5);
+  stroke: rgba(0,255,0,.5);
 }
 
 .dot--purple {
-  fill: rgba(255,0,255,.5);
+  stroke: rgba(255,0,255,.5);
 }
 
 .dot--red {
-  fill: rgba(255,0,0,.5);
+  stroke: rgba(255,0,0,.5);
 }
 
 .zoom {
@@ -77,6 +64,10 @@
 .selection {
   stroke: #5183fb;
   fill: rgba(81,131,251, 0.5);
+}
+
+.viz-wrap {
+  flex: .7;
 }
 
 .hack-list {
@@ -125,21 +116,79 @@
   background-color: #181F37;
 }
 
-.crypto-logo {
-  width: auto;
-  height: 75px;
-  cursor: pointer;
-}
-.crypto-logo:not(:last-child) {
-  margin-right: 50px;
-}
-.crypto-logo.crypto-logo-clicked,
-.crypto-logo.crypto-logo-clicked:hover {
-  box-shadow: 0 0 10px 10px white;
+.crypto-logo-container {
+  max-width: 800px;
+  display: flex;
+  margin-left: auto;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-left: 1rem;
+  border-left: 1px solid;
+  margin-left: 14.8rem;
 }
 
-.crypto-logo:hover {
-  box-shadow: 0 0 10px 10px white;
+.crypto-logo-container-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.crypto-logo-container-row + .crypto-logo-container-row {
+  margin-top: 1rem;
+}
+
+.crypto-logo {
+  width: auto;
+  height: 32px;
+  margin-right: 1rem;
+}
+
+.crypto-logo-block {
+  display: flex;
+  width: 150px;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.crypto-logo-block:hover {
+  text-shadow: 0 0 10px #FFFFFF,0 0 10px #FFFFFF,0 0 10px #FFFFFF;
+}
+
+.crypto-name {
+  margin-top: 3px;
+  border-bottom: 3px solid transparent;
+}
+
+.crypto-logo--active .crypto-name--orange {
+  border-color: orange;
+}
+
+.crypto-logo--active .crypto-name--purple {
+  border-color: purple;
+}
+
+.crypto-logo--active .crypto-name--silver {
+  border-color: silver;
+}
+
+.crypto-logo--active .crypto-name--lime {
+  border-color: lime;
+}
+
+.crypto-logo--active .crypto-name--blue {
+  border-color: blue;
+}
+
+.crypto-logo--active .crypto-name--white {
+  border-color: white;
+}
+
+.crypto-logo--active .crypto-name--red {
+  border-color: red;
+}
+
+.crypto-logo--active .crypto-name--yellow {
+  border-color: yellow;
 }
 
 .invisible{
@@ -147,6 +196,7 @@
 }
 
 .tooltip {
+  display: none;
   position: absolute;
   background-color: #1D263F;
   font-weight: 100;
@@ -155,8 +205,4 @@
   border-radius: 10px;
   margin: 0 0 0 100px;
   line-height: 1.5;
-}
-
-.section--viz svg {
-  position: relative;
 }

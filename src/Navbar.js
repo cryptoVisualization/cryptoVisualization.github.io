@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { NavLink } from "react-router-dom";
-import scrollreveal from 'scrollreveal';
 import './App.css';
 
 class Navbar extends Component {
