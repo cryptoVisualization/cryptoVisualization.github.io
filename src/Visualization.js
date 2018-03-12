@@ -69,7 +69,7 @@ class Visualization extends Component {
 
     // gridlines in y axis function
     function make_y_gridlines() {		
-      return d3.axisLeft(y).ticks(5)
+      return d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat("")
     }
     
     svg.append("defs").append("clipPath")
@@ -119,7 +119,7 @@ class Visualization extends Component {
 
       global_coinmarketcap = coinmarketcap;
 
-      var plottedCoins = ['Bitcoin', 'Vericoin', 'NEM', 'IOTA', 'Ethereum', 'Tether', 'Steem'];
+      var plottedCoins = ['Bitcoin', 'Ethereum', 'IOTA', 'NEM', 'Ripple', 'Tether', 'Steem', 'Vericoin'];
 
       var yearMonthAttacks = cloneDeep(attackArray).map(function(d) {
         d.date = d.date.slice(0,7);
@@ -150,6 +150,7 @@ class Visualization extends Component {
             Vericoin: reduceCoin(monthHacks, 'Vericoin'),
             NEM: reduceCoin(monthHacks, 'NEM'),
             IOTA: reduceCoin(monthHacks, 'IOTA'),
+            Ripple: reduceCoin(monthHacks, 'Ripple'),
             Ethereum: reduceCoin(monthHacks, 'Ethereum'),
             Tether: reduceCoin(monthHacks, 'Tether'),
             Steem: reduceCoin(monthHacks, 'Steem'),
@@ -159,6 +160,7 @@ class Visualization extends Component {
                        + result.Vericoin
                        + result.NEM
                        + result.IOTA
+                       + result.Ripple
                        + result.Ethereum
                        + result.Tether
                        + result.Steem;
@@ -221,8 +223,6 @@ class Visualization extends Component {
       focus.append("g")			
         .attr("class", "grid")
         .call(make_y_gridlines()
-            .tickSize(-width)
-            .tickFormat("")
         )
 
       focus.append("g")
@@ -246,9 +246,7 @@ class Visualization extends Component {
       context.append("g")			
         .attr("class", "grid")
         .call(make_y_gridlines()
-            .tickSize(-width)
-            .tickFormat("")
-        )
+         )
 
       context.append("g")
         .attr("class", "axis axis--x")
@@ -322,13 +320,45 @@ class Visualization extends Component {
         .selectAll("rect")
         .data(function(d) {return d;})
         .enter().append("rect")
-          .attr("class", "stack")
-          .attr("x", function(d) { 
-            return x3(d.data.date); })
-          .attr("y", 1)
-          .attr("width", 25)
-          .attr("height", function(d) { 
-            return y3(parseInt(d[1], 10)) - y3(parseInt(d[0], 10)); });
+        .attr("class", "stack")
+        .attr("x", function(d) { 
+          return x3(d.data.date) - (width / 74); })
+        .attr("y", 1)
+        .attr("width", function(d) {             
+          return width / 74 })
+        .attr("height", function(d) { 
+          return y3(parseInt(d[1], 10)) - y3(parseInt(d[0], 10)); })
+        .on('mouseover', function(d, i) {
+          tip.transition().duration(0);
+          var coordinates = d3.mouse(this); 
+          var x = coordinates[0];
+          var y = coordinates[1];
+          tip.style("left", x + 50 + "px")
+             .style("top", y + 550 + "px")
+             .style('display', 'block')
+
+          var html = `               
+            <div>
+              Total loss: ${formatUSD(d[1])}
+              <ul>`
+              html += d.data.Bitcoin ? `<li>Bitcoin: ${formatUSD(d.data.Bitcoin)}</li>` : ''
+              html += d.data.Ethereum ? `<li>Ethereum: ${formatUSD(d.data.Ethereum)}</li>` : ''
+              html += d.data.Ripple ? `<li>Ripple: ${formatUSD(d.data.Ripple)}</li>` : ''
+              html += d.data.IOTA ? `<li>IOTA: ${formatUSD(d.data.IOTA)}</li>` : ''
+              html += d.data.NEM ? `<li>NEM: ${formatUSD(d.data.NEM)}</li>` : ''
+              html += d.data.Steem ? `<li>Steem: ${formatUSD(d.data.Steem)}</li>` : ''
+              html += d.data.Tether ? `<li>Tether: ${formatUSD(d.data.Tether)}</li>` : ''
+              html += d.data.Vericoin ? `<li>Vericoin: ${formatUSD(d.data.Vericoin)}</li>` : ''
+              html += ` 
+              </ul>
+            </div>`;
+          tip.html(html);     //  Give our template string to the tooltip for output
+        })
+        .on('mouseout', function(d, i) {  //  Mouseout
+          tip.transition()
+            .delay(800)
+            .style('display', 'none');
+        });
     }
     
     function appendCoin(data, color, line, line2, target, brushTarget) {
@@ -473,17 +503,19 @@ class Visualization extends Component {
       var max = d3.max(minmaxArray,function(d){ return d[1]});
       
       y.domain([min,max]);
-      
-      focus.select(".axis--y").transition().duration(1500).call(yAxis);
+
+      focus.select(".grid").transition().duration(1000).call(make_y_gridlines())
+
+      focus.select(".axis--y").transition().duration(1000).call(yAxis);
       var s = d3.event.selection || x2.range();
       x.domain(s.map(x2.invert, x2));
       x3.domain(s.map(x2.invert, x2));
-      focus.selectAll(".line").transition().duration(1500).attr("d", line);
+      focus.selectAll(".line").transition().duration(1000).attr("d", line);
       focus.select(".axis--x").call(xAxis);
       stacks.select(".axis--x").call(xAxis3);
       console.time();
       dots.selectAll(".dot")
-      .transition().duration(1500)
+      .transition().duration(1000)
       .attr("display", function(d){
         if(currentCurrencies.includes(d.cryptocurrency)){
           return "block";

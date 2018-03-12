@@ -11,7 +11,7 @@ class AboutUs extends Component {
 
   render() {
     return (
-      <div className="section-container section-container--dark">
+      <div className="section-container section-container--deco1 section-container--dark">
         <section className="section">
           <h2>About us</h2>
           <p>We are a group of students at the Royal Institute of Technology (KTH) in Stockholm, Sweden with a great interest in data visualization, cryptocurrencies and computer security. These interests led us to create this visualization as a tool to analyze prices and attacks concerning cryptocurrencies.</p>
