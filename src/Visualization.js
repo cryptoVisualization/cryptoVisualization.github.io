@@ -384,13 +384,14 @@ class Visualization extends Component {
     }
     
     function addDotClass(d) {
-      if (d.typeOfAttack === "Hack") {
-        return "dot dot--green";
-      } else if (d.typeOfAttack === "Scam") {
-        return "dot dot--purple";
-      } else {
-        return "dot dot--red"
-      }
+      return "dot dot--red"
+      // if (d.typeOfAttack === "Hack") {
+      //   return "dot dot--green";
+      // } else if (d.typeOfAttack === "Scam") {
+      //   return "dot dot--purple";
+      // } else {
+      //   return "dot dot--red"
+      // }
     }
     
     function dotSize(d) {
