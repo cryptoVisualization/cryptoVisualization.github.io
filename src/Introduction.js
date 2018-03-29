@@ -12,7 +12,7 @@ class Introduction extends Component {
   render() {
     console.log(this.props)
     return (
-      <div className="section-container section-container--deco2 section-container--dark">
+      <div className="section-container section-container--deco section-container--dark">
         <section className="section">
           <h2>Introduction</h2>
           <p>There is currently a craze surrounding the relatively new concept of cryptocurrencies. Currencies that carry no real value other than the ability to trade them anonymously and without a central agency in control. This current obsession with the concept causes a very volatile market with prices increasing and dropping incredibly fast and huge amounts of people flocking to invest in the currencies.</p>

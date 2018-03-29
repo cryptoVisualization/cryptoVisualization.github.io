@@ -21,6 +21,10 @@
   stroke: none;
 }
 
+.axis--margin .tick text {
+  transform: translate(15px);
+}
+
 .tick text {
   fill: #BDBDC1;
 }

@@ -11,7 +11,7 @@ class Attacks extends Component {
 
   render() {
     return (
-      <div className="section-container section-container--deco2 section-container--dark">
+      <div className="section-container section-container--deco section-container--dark">
         <section className="section">
           <h2>What are the different kind of attacks?</h2>
           <div className="attack-block">

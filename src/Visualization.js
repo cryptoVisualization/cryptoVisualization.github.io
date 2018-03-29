@@ -47,7 +47,7 @@ class Visualization extends Component {
         xAxis2 = d3.axisBottom(x2),
         xAxis3 = d3.axisTop(x3),
         yAxis  = d3.axisLeft(y).ticks(5),
-        yAxis3 = d3.axisLeft(y3).ticks(5);
+        yAxis3 = d3.axisLeft(y3).ticks(5).tickFormat(d3.formatPrefix(".1", 1e6));
     
     var brush = d3.brushX()
                   .extent([[0, 0], [width, height2]])
@@ -229,7 +229,7 @@ class Visualization extends Component {
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
-    
+
       focus.append("g")
         .attr("class", "axis axis--y")
         .call(yAxis);
@@ -307,7 +307,7 @@ class Visualization extends Component {
         .call(xAxis3);
     
       stacks.append("g")
-        .attr("class", "axis axis--y")
+        .attr("class", "axis axis--y axis--margin")
         .call(yAxis3);
 
       stacks.append("g")

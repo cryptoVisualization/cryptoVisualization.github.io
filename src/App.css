@@ -128,16 +128,9 @@ h2 {
   text-align: center;
 }
 
-.section-container--deco1 {
+.section-container--deco {
   background: url('./assets/images/deco1.png'), radial-gradient(#232745, #1B2034);
-  background-position: 50% 110%;
-  background-repeat: no-repeat;
-  background-size: 110%;
-}
-
-.section-container--deco2 {
-  background: url('./assets/images/deco2.png'), radial-gradient(#232745, #1B2034);
-  background-position: top;
+  background-position: center 130%;
   background-repeat: no-repeat;
   background-size: 110%;
 }
