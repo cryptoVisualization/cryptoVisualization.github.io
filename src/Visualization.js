@@ -333,11 +333,11 @@ class Visualization extends Component {
           var coordinates = d3.mouse(this); 
           var x = coordinates[0];
           var y = coordinates[1];
-          tip.style("left", x + 100 + "px")
-             .style("top", y + 500 + "px")
+          tip.style("left", x + 200 + "px")
+             .style("top", y + 600 + "px")
              .style('display', 'block')
 
-          var html = `               
+          var html = `
             <div>
               Total loss: ${formatUSD(d[1])}
               <ul>`
